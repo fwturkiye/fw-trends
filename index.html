@@ -422,6 +422,44 @@ function buildCityFilter(elId, cities, allCities, chartFn) {
 }
 
 function buildLineChart(canvasId, cities, allCities, cat, kw, legendId, activeCity) {
+  const validCities = cities.filter(c => DATA.cities[c]?.dates);
+  if (!validCities.length) return null;
+  const dates = DATA.cities[validCities[0]]?.dates || [];
+  const labels = dates.map(d => new Date(d).toLocaleDateString('tr-TR',{month:'short',year:'2-digit'}));
+  const displayCities = activeCity ? [activeCity] : validCities.slice(0, 8);
+
+  document.getElementById(legendId).innerHTML = displayCities.map(c => {
+    const idx = allCities.indexOf(c);
+    return `<span class="leg on"><span class="leg-dot" style="background:${COLORS[idx%COLORS.length]}"></span>${c}</span>`;
+  }).join('');
+
+  const datasets = displayCities.map(c => {
+    const idx = allCities.indexOf(c);
+    return {
+      label: c,
+      data: DATA.cities[c][cat]?.[kw] || [],
+      borderColor: COLORS[idx%COLORS.length],
+      backgroundColor: 'transparent',
+      borderWidth: activeCity ? 2.5 : 1.8,
+      pointRadius: activeCity ? 3 : 1,
+      tension: 0.35,
+    };
+  });
+
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  return new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 }, maxTicksLimit: 10 } },
+        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 } } }
+      }
+    }
+  });
+}{
   const dates = DATA.cities[cities[0]]?.dates || [];
   const labels = dates.map(d => new Date(d).toLocaleDateString('tr-TR',{month:'short',year:'2-digit'}));
   const filtered = activeCity ? [activeCity] : cities;
