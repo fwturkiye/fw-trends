@@ -3,115 +3,311 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FW Türkiye — Fitness Trend Analizi</title>
+<title>FW Türkiye — Fitness Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --panel: #111118;
-    --border: #1e1e2e;
-    --accent: #e8ff00;
-    --text: #f0f0f0;
-    --muted: #666680;
-    --card: #16161f;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+:root {
+  --bg: #08080e;
+  --panel: #0f0f18;
+  --card: #13131e;
+  --border: #1a1a2e;
+  --accent: #e8ff00;
+  --green: #66ff83;
+  --text: #f0f0f5;
+  --muted: #5a5a7a;
+  --muted2: #3a3a5a;
+  --premium: #c9a84c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
 
-  header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 24px; border-bottom: 1px solid var(--border);
-    background: var(--panel); position: sticky; top: 0; z-index: 10;
-  }
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; color: var(--accent); }
-  .logo span { color: var(--text); }
-  .updated { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+/* HEADER */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:56px;border-bottom:1px solid var(--border);
+  background:var(--panel);position:sticky;top:0;z-index:100;gap:12px;
+}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--accent);white-space:nowrap;}
+.logo span{color:var(--text);}
+.header-center{display:flex;align-items:center;gap:6px;flex:1;justify-content:center;overflow-x:auto;}
+.header-center::-webkit-scrollbar{display:none;}
+.tab-btn{
+  font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:6px 14px;
+  border:1px solid var(--border);background:transparent;color:var(--muted);
+  cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;
+  transition:all 0.15s;border-radius:4px;
+}
+.tab-btn:hover{color:var(--text);border-color:var(--muted2);}
+.tab-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+.tab-btn.premium-tab{border-color:var(--premium);color:var(--premium);}
+.tab-btn.premium-tab.active{background:var(--premium);color:#000;}
+.updated{font-size:10px;color:var(--muted);white-space:nowrap;}
 
-  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:20px 16px;}
 
-  .controls { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-  .ctrl-btn {
-    font-size: 12px; padding: 6px 16px; border-radius: 99px;
-    border: 1px solid var(--border); background: transparent;
-    color: var(--muted); cursor: pointer; transition: all 0.15s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .ctrl-btn:hover, .ctrl-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+/* REGION PILLS */
+.region-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.region-pill{
+  font-size:11px;padding:5px 14px;border-radius:99px;
+  border:1px solid var(--border);background:transparent;color:var(--muted);
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;
+}
+.region-pill:hover{border-color:var(--muted2);color:var(--text);}
+.region-pill.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
 
-  .kw-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-left: 12px; text-transform: uppercase; }
+/* KW PILLS */
+.kw-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
+.kw-label{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+.kw-pill{
+  font-size:11px;padding:5px 14px;border-radius:99px;
+  border:1px solid var(--border);background:transparent;color:var(--muted);
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;
+}
+.kw-pill:hover{border-color:var(--muted2);color:var(--text);}
+.kw-pill.active{border-color:var(--green);color:var(--green);}
 
-  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .metric { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-  .metric-label { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
-  .metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); line-height: 1; }
-  .metric-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px;}
+.metric{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;position:relative;overflow:hidden;}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.5;}
+.metric-label{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.metric-value{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);line-height:1;}
+.metric-sub{font-size:10px;color:var(--muted);margin-top:4px;}
+.metric.green .metric-value{color:var(--green);}
+.metric.green::before{background:var(--green);}
 
-  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-  .chart-title { font-size: 11px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+/* CHART CARDS */
+.chart-grid{display:grid;grid-template-columns:1fr;gap:14px;}
+@media(min-width:768px){.chart-grid-2{grid-template-columns:1fr 1fr!important;}}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.chart-card-title{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.leg{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);padding:2px 7px;border-radius:99px;border:1px solid transparent;cursor:pointer;}
+.leg.on{border-color:var(--border);color:var(--text);}
+.leg-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0;}
 
-  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); cursor: pointer; }
-  .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+/* CITY FILTER */
+.city-filter{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+.city-chip{
+  font-size:10px;padding:3px 9px;border-radius:99px;
+  border:1px solid var(--border);background:transparent;color:var(--muted);
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;
+}
+.city-chip.on{font-weight:600;color:#000;border-color:transparent;}
 
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+/* RANKING */
+.rank-row{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);gap:8px;}
+.rank-row:last-child{border-bottom:none;}
+.rank-num{font-size:10px;color:var(--muted);min-width:16px;text-align:right;}
+.rank-city{font-size:11px;color:var(--text);min-width:85px;}
+.rank-bar-wrap{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.rank-bar{height:100%;border-radius:2px;transition:width 0.5s ease;}
+.rank-val{font-size:10px;color:var(--muted);min-width:22px;text-align:right;}
+.trend-tag{font-size:8px;padding:1px 5px;border-radius:99px;margin-left:3px;}
+.tag-up{background:rgba(102,255,131,0.1);color:#66ff83;}
+.tag-down{background:rgba(255,77,0,0.1);color:#ff4d00;}
+.tag-flat{background:rgba(90,90,122,0.15);color:var(--muted);}
 
-  .bar-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 10px; }
-  .bar-row:last-child { border-bottom: none; }
-  .bar-city { font-size: 12px; color: var(--text); min-width: 90px; }
-  .bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
-  .bar-val { font-size: 11px; color: var(--muted); min-width: 24px; text-align: right; }
-  .trend-tag { font-size: 9px; padding: 2px 6px; border-radius: 99px; margin-left: 4px; }
-  .tag-up { background: rgba(0,255,100,0.1); color: #00ff64; }
-  .tag-down { background: rgba(255,77,0,0.1); color: #ff4d00; }
-  .tag-flat { background: rgba(100,100,128,0.1); color: var(--muted); }
+/* PREMIUM LOCK */
+.premium-overlay{
+  position:relative;border-radius:10px;overflow:hidden;
+}
+.premium-lock{
+  position:absolute;inset:0;background:rgba(8,8,14,0.88);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;z-index:10;border-radius:10px;
+  border:1px solid var(--premium);
+}
+.lock-icon{font-size:28px;opacity:0.8;}
+.lock-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--premium);letter-spacing:2px;}
+.lock-sub{font-size:11px;color:var(--muted);text-align:center;padding:0 20px;line-height:1.5;}
+.lock-btn{
+  background:var(--premium);color:#000;border:none;
+  padding:8px 20px;font-family:'Bebas Neue',sans-serif;
+  font-size:14px;letter-spacing:1.5px;cursor:pointer;border-radius:4px;
+  margin-top:4px;
+}
 
-  .loading { display: flex; align-items: center; justify-content: center; height: 300px; flex-direction: column; gap: 16px; color: var(--muted); }
-  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* HYROX/PADEL */
+.rising-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.rising-grid{grid-template-columns:1fr;}}
+.rising-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.rising-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:4px;}
+.hyrox-color{color:#ff6b35;}
+.padel-color{color:#00d4ff;}
+.rising-sub{font-size:10px;color:var(--muted);margin-bottom:14px;}
 
-  .error { background: rgba(255,77,0,0.08); border: 1px solid #ff4d00; color: #ff4d00; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; }
+/* WELLNESS */
+.wellness-kw-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+
+/* SPINNER */
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading{display:flex;align-items:center;justify-content:center;height:180px;gap:12px;color:var(--muted);font-size:12px;}
+
+/* SECTION HIDDEN */
+.section{display:none;}
+.section.active{display:block;}
+
+.divider{height:1px;background:var(--border);margin:20px 0;}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">FW<span>TÜRKİYE</span></div>
-  <div class="updated" id="updatedAt">Yükleniyor...</div>
+  <div class="header-center">
+    <button class="tab-btn active" onclick="setTab(this,'fitness')">Fitness</button>
+    <button class="tab-btn" onclick="setTab(this,'wellness')">Wellness</button>
+    <button class="tab-btn" onclick="setTab(this,'rising')">Hyrox & Padel</button>
+    <button class="tab-btn premium-tab" onclick="setTab(this,'premium')">⭐ Premium</button>
+  </div>
+  <div class="updated" id="updatedAt">—</div>
 </header>
 
-<div class="container">
+<div class="main">
 
-  <div class="controls" id="controls">
-    <span class="kw-label">Arama terimi:</span>
-    <button class="ctrl-btn active" onclick="setKw(this,'spor salonu')">Spor Salonu</button>
-    <button class="ctrl-btn" onclick="setKw(this,'fitness')">Fitness</button>
-    <button class="ctrl-btn" onclick="setKw(this,'gym')">Gym</button>
-  </div>
-
-  <div class="metrics" id="metrics">
-    <div class="loading"><div class="spinner"></div><div>Veriler yükleniyor...</div></div>
-  </div>
-
-  <div class="chart-card">
-    <div class="chart-title">Aylık arama trendi — şehir karşılaştırması</div>
-    <div class="legend" id="legend"></div>
-    <div style="position:relative;width:100%;height:280px;">
-      <canvas id="trendChart" role="img" aria-label="Şehir bazında aylık fitness arama trendi"></canvas>
+  <!-- FITNESS TAB -->
+  <div class="section active" id="tab-fitness">
+    <div class="region-bar" id="fitnessRegionBar"></div>
+    <div class="kw-bar">
+      <span class="kw-label">Terim:</span>
+      <button class="kw-pill active" onclick="setFitnessKw(this,'spor salonu')">Spor Salonu</button>
+      <button class="kw-pill" onclick="setFitnessKw(this,'fitness')">Fitness</button>
+      <button class="kw-pill" onclick="setFitnessKw(this,'gym')">Gym</button>
+    </div>
+    <div class="metrics" id="fitnessMetrics">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>
+    </div>
+    <div class="chart-card" style="margin-bottom:14px;">
+      <div class="chart-card-title">
+        <span>Aylık Arama Trendi</span>
+        <span id="fitnessRegionLabel" style="color:var(--accent);font-size:9px;"></span>
+      </div>
+      <div class="city-filter" id="fitnessCityFilter"></div>
+      <div class="legend" id="fitnessLegend"></div>
+      <div style="position:relative;width:100%;height:260px;">
+        <canvas id="fitnessChart" role="img" aria-label="Fitness arama trendi"></canvas>
+      </div>
+    </div>
+    <div class="chart-grid chart-grid-2" style="display:grid;gap:14px;">
+      <div class="chart-card">
+        <div class="chart-card-title">Şehir Sıralaması</div>
+        <div id="fitnessRanking"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Terim Dağılımı</div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="fitnessKwChart" role="img" aria-label="Arama terimi dağılımı"></canvas>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="two-col">
-    <div class="chart-card">
-      <div class="chart-title">Şehir sıralaması (ort. ilgi puanı)</div>
-      <div id="cityRanking"><div class="loading"><div class="spinner"></div></div></div>
+  <!-- WELLNESS TAB -->
+  <div class="section" id="tab-wellness">
+    <div class="region-bar" id="wellnessRegionBar"></div>
+    <div class="kw-bar">
+      <span class="kw-label">Terim:</span>
+      <button class="kw-pill active" onclick="setWellnessKw(this,'yoga')">Yoga</button>
+      <button class="kw-pill" onclick="setWellnessKw(this,'pilates')">Pilates</button>
+      <button class="kw-pill" onclick="setWellnessKw(this,'meditasyon')">Meditasyon</button>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">Arama terimi dağılımı</div>
-      <div style="position:relative;width:100%;height:220px;">
-        <canvas id="kwChart" role="img" aria-label="Spor salonu, fitness ve gym arama dağılımı"></canvas>
+    <div class="metrics" id="wellnessMetrics">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>
+    </div>
+    <div class="chart-card" style="margin-bottom:14px;">
+      <div class="chart-card-title">
+        <span>Wellness Arama Trendi</span>
+        <span id="wellnessRegionLabel" style="color:var(--green);font-size:9px;"></span>
+      </div>
+      <div class="city-filter" id="wellnessCityFilter"></div>
+      <div class="legend" id="wellnessLegend"></div>
+      <div style="position:relative;width:100%;height:260px;">
+        <canvas id="wellnessChart" role="img" aria-label="Wellness arama trendi"></canvas>
+      </div>
+    </div>
+    <div class="chart-grid chart-grid-2" style="display:grid;gap:14px;">
+      <div class="chart-card">
+        <div class="chart-card-title">Şehir Sıralaması</div>
+        <div id="wellnessRanking"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Terim Dağılımı</div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="wellnessKwChart" role="img" aria-label="Wellness terim dağılımı"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HYROX & PADEL TAB -->
+  <div class="section" id="tab-rising">
+    <div class="metrics" id="risingMetrics">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>
+    </div>
+    <div class="rising-grid">
+      <div class="rising-card">
+        <div class="rising-title hyrox-color">HYROX</div>
+        <div class="rising-sub">Fonksiyonel fitness yarışma trendi</div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="hyroxChart" role="img" aria-label="Hyrox arama trendi"></canvas>
+        </div>
+      </div>
+      <div class="rising-card">
+        <div class="rising-title padel-color">PADEL</div>
+        <div class="rising-sub">Raket sporları yükseliş trendi</div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="padelChart" role="img" aria-label="Padel arama trendi"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-top:14px;">
+      <div class="chart-card-title">Şehir Bazında Karşılaştırma</div>
+      <div class="legend" id="risingLegend"></div>
+      <div style="position:relative;width:100%;height:260px;">
+        <canvas id="risingCityChart" role="img" aria-label="Hyrox ve Padel şehir karşılaştırması"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREMIUM TAB -->
+  <div class="section" id="tab-premium">
+    <div style="text-align:center;padding:30px 0 20px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--premium);letter-spacing:3px;">PREMIUM ANALİTİK</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:6px;">Türkiye fitness sektörünün en kapsamlı veri platformu</div>
+    </div>
+    <div class="metrics" style="margin-bottom:20px;">
+      <div class="metric" style="border-color:var(--premium);"><div class="metric::before" style="background:var(--premium)"></div><div class="metric-label">Aylık Abonelik</div><div class="metric-value" style="color:var(--premium);">₺990</div><div class="metric-sub">Tüm bölgeler + haftalık rapor</div></div>
+      <div class="metric" style="border-color:var(--premium);"><div class="metric-label">Yıllık Abonelik</div><div class="metric-value" style="color:var(--premium);">₺7.900</div><div class="metric-sub">%33 indirim + özel danışmanlık</div></div>
+      <div class="metric" style="border-color:var(--premium);"><div class="metric-label">Tek Rapor</div><div class="metric-value" style="color:var(--premium);">₺2.500</div><div class="metric-sub">Seçilen bölge PDF raporu</div></div>
+      <div class="metric" style="border-color:var(--premium);"><div class="metric-label">Kurumsal</div><div class="metric-value" style="color:var(--premium);">Özel</div><div class="metric-sub">API erişimi + white-label</div></div>
+    </div>
+    <div class="premium-overlay">
+      <div class="chart-card" style="filter:blur(3px);pointer-events:none;opacity:0.4;">
+        <div class="chart-card-title">Bölgesel Pazar Büyüklüğü Analizi</div>
+        <div style="height:200px;background:var(--border);border-radius:6px;"></div>
+      </div>
+      <div class="premium-lock">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">Premium İçerik</div>
+        <div class="lock-sub">Bölgesel pazar analizi, rakip yoğunluk haritası ve büyüme projeksiyonları premium üyelere özeldir.</div>
+        <button class="lock-btn" onclick="alert('İletişim: info@fwturkiye.net')">SATIN AL</button>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="premium-overlay" style="margin-top:14px;">
+      <div class="chart-card" style="filter:blur(3px);pointer-events:none;opacity:0.4;">
+        <div class="chart-card-title">Rakip Yoğunluk Haritası</div>
+        <div style="height:200px;background:var(--border);border-radius:6px;"></div>
+      </div>
+      <div class="premium-lock">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">Rakip Analizi</div>
+        <div class="lock-sub">Her şehirde rakip sayısı, ortalama rating ve pazar boşluklarını görüntüleyin.</div>
+        <button class="lock-btn" onclick="alert('İletişim: info@fwturkiye.net')">SATIN AL</button>
       </div>
     </div>
   </div>
@@ -119,143 +315,299 @@
 </div>
 
 <script>
-const COLORS = ['#e8ff00','#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#EC4899','#84CC16','#F97316','#6366F1','#14B8A6','#FB923C','#A855F7','#22D3EE'];
+const COLORS = ['#e8ff00','#3B82F6','#66ff83','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#EC4899','#84CC16','#F97316','#6366F1','#14B8A6','#FB923C','#A855F7','#22D3EE','#ff6b35','#00d4ff','#ff4d6d','#c9a84c'];
+const REGIONS = ['Tümü','Marmara','Ege','İç Anadolu','Akdeniz','Karadeniz','Doğu Anadolu','Güneydoğu Anadolu'];
 
 let DATA = null;
-let currentKw = 'spor salonu';
-let trendChart = null, kwChart = null;
+let fitnessRegion = 'Tümü', fitnessKw = 'spor salonu', fitnessChart = null, fitnessKwChart = null;
+let wellnessRegion = 'Tümü', wellnessKw = 'yoga', wellnessChart = null, wellnessKwChart = null;
+let hyroxChart = null, padelChart = null, risingCityChart = null;
 
 async function loadData() {
   try {
     const res = await fetch('data/trends.json?t=' + Date.now());
-    if (!res.ok) throw new Error('Veri dosyası bulunamadı.');
+    if (!res.ok) throw new Error('Veri yüklenemedi.');
     DATA = await res.json();
-    render();
+    const d = new Date(DATA.updated);
+    document.getElementById('updatedAt').textContent = d.toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'});
+    buildRegionBars();
+    renderFitness();
+    renderWellness();
+    renderRising();
   } catch(e) {
-    document.getElementById('metrics').innerHTML = `<div class="error">⚠️ ${e.message}<br><br>GitHub Actions henüz çalışmamış olabilir. Repository'de Actions sekmesinden manuel başlatın.</div>`;
-    document.getElementById('updatedAt').textContent = 'Veri yok';
+    document.getElementById('updatedAt').textContent = 'Hata';
+    console.error(e);
   }
 }
 
-function render() {
-  if (!DATA) return;
-  const d = new Date(DATA.updated);
-  document.getElementById('updatedAt').textContent = 'Son güncelleme: ' + d.toLocaleDateString('tr-TR', {day:'numeric',month:'long',year:'numeric'});
-
-  const cities = Object.keys(DATA.cities);
-  const scores = cities.map(c => {
-    const arr = DATA.cities[c][currentKw] || [];
-    return { city: c, avg: arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0, last: arr[arr.length-1]||0, first: arr[0]||0 };
-  }).sort((a,b) => b.avg - a.avg);
-
-  const top = scores[0];
-  const fastest = [...scores].sort((a,b) => (b.last-b.first)-(a.last-a.first))[0];
-  const totalScore = scores.reduce((s,c)=>s+c.avg,0);
-  const dates = DATA.cities[cities[0]]?.dates || [];
-  const peakMonth = getPeakMonth(cities, dates);
-
-  document.getElementById('metrics').innerHTML = `
-    <div class="metric"><div class="metric-label">En popüler şehir</div><div class="metric-value">${top.city}</div><div class="metric-sub">Ort. puan: ${top.avg}</div></div>
-    <div class="metric"><div class="metric-label">En hızlı büyüyen</div><div class="metric-value">${fastest.city}</div><div class="metric-sub">↑ ${fastest.last - fastest.first} puan artış</div></div>
-    <div class="metric"><div class="metric-label">Zirve dönem</div><div class="metric-value">${peakMonth}</div><div class="metric-sub">En yüksek ilgi</div></div>
-    <div class="metric"><div class="metric-label">Toplam trend puanı</div><div class="metric-value">${totalScore}</div><div class="metric-sub">${cities.length} şehir toplamı</div></div>
-  `;
-
-  buildTrendChart(cities, dates);
-  buildCityRanking(scores);
-  buildKwChart(cities);
+function getCities(region) {
+  const all = Object.keys(DATA.cities);
+  if (region === 'Tümü') return all;
+  return all.filter(c => DATA.cities[c].region === region);
 }
 
-function getPeakMonth(cities, dates) {
-  if (!dates.length) return '—';
-  const totals = dates.map((d,i) => {
-    const sum = cities.reduce((s,c) => s + (DATA.cities[c][currentKw]?.[i]||0), 0);
-    return { date: d, sum };
+function buildRegionBars() {
+  ['fitness','wellness'].forEach(tab => {
+    const el = document.getElementById(tab + 'RegionBar');
+    el.innerHTML = REGIONS.map(r =>
+      `<button class="region-pill ${r==='Tümü'?'active':''}" onclick="setRegion(this,'${tab}','${r}')">${r}</button>`
+    ).join('');
   });
+}
+
+function setRegion(btn, tab, region) {
+  document.querySelectorAll('#' + tab + 'RegionBar .region-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'fitness') { fitnessRegion = region; renderFitness(); }
+  else { wellnessRegion = region; renderWellness(); }
+}
+
+function setFitnessKw(btn, kw) {
+  document.querySelectorAll('#tab-fitness .kw-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  fitnessKw = kw; renderFitness();
+}
+
+function setWellnessKw(btn, kw) {
+  document.querySelectorAll('#tab-wellness .kw-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  wellnessKw = kw; renderWellness();
+}
+
+function setTab(btn, tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function getScores(cities, cat, kw) {
+  return cities.map(c => {
+    const arr = DATA.cities[c][cat]?.[kw] || [];
+    const avg = arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0;
+    return { city: c, avg, first: arr[0]||0, last: arr[arr.length-1]||0 };
+  }).sort((a,b) => b.avg - a.avg);
+}
+
+function getPeakMonth(cities, cat, kw) {
+  const dates = DATA.cities[cities[0]]?.dates || [];
+  if (!dates.length) return '—';
+  const totals = dates.map((d,i) => ({ date: d, sum: cities.reduce((s,c) => s+(DATA.cities[c][cat]?.[kw]?.[i]||0),0) }));
   const peak = totals.sort((a,b)=>b.sum-a.sum)[0];
   return new Date(peak.date).toLocaleDateString('tr-TR',{month:'long'});
 }
 
-function buildTrendChart(cities, dates) {
-  const labels = dates.map(d => {
-    const dt = new Date(d);
-    return dt.toLocaleDateString('tr-TR',{month:'short', year:'2-digit'});
+function renderMetrics(elId, scores, cat, kw, accentClass) {
+  if (!scores.length) return;
+  const top = scores[0];
+  const fastest = [...scores].sort((a,b)=>(b.last-b.first)-(a.last-a.first))[0];
+  const total = scores.reduce((s,c)=>s+c.avg,0);
+  const cities = scores.map(s=>s.city);
+  const peak = getPeakMonth(cities, cat, kw);
+  document.getElementById(elId).innerHTML = `
+    <div class="metric ${accentClass}"><div class="metric-label">En Popüler</div><div class="metric-value">${top.city}</div><div class="metric-sub">Ort. ${top.avg}</div></div>
+    <div class="metric ${accentClass}"><div class="metric-label">En Hızlı Büyüyen</div><div class="metric-value">${fastest.city}</div><div class="metric-sub">↑ ${Math.max(0,fastest.last-fastest.first)} puan</div></div>
+    <div class="metric ${accentClass}"><div class="metric-label">Zirve Dönem</div><div class="metric-value">${peak}</div><div class="metric-sub">En yüksek ilgi</div></div>
+    <div class="metric ${accentClass}"><div class="metric-label">Toplam Puan</div><div class="metric-value">${total}</div><div class="metric-sub">${cities.length} şehir</div></div>
+  `;
+}
+
+function buildCityFilter(elId, cities, allCities, chartFn) {
+  document.getElementById(elId).innerHTML =
+    `<button class="city-chip on" style="background:var(--muted2);color:var(--text)" onclick="${chartFn}(null)">Tümü</button>` +
+    cities.map((c,i) => {
+      const idx = allCities.indexOf(c);
+      return `<button class="city-chip on" style="background:${COLORS[idx%COLORS.length]}" onclick="${chartFn}('${c}')">${c}</button>`;
+    }).join('');
+}
+
+function buildLineChart(canvasId, cities, allCities, cat, kw, legendId, activeCity) {
+  const dates = DATA.cities[cities[0]]?.dates || [];
+  const labels = dates.map(d => new Date(d).toLocaleDateString('tr-TR',{month:'short',year:'2-digit'}));
+  const filtered = activeCity ? [activeCity] : cities;
+
+  document.getElementById(legendId).innerHTML = filtered.map(c => {
+    const idx = allCities.indexOf(c);
+    return `<span class="leg on"><span class="leg-dot" style="background:${COLORS[idx%COLORS.length]}"></span>${c}</span>`;
+  }).join('');
+
+  const datasets = filtered.map(c => {
+    const idx = allCities.indexOf(c);
+    return {
+      label: c,
+      data: DATA.cities[c][cat]?.[kw] || [],
+      borderColor: COLORS[idx%COLORS.length],
+      backgroundColor: 'transparent',
+      borderWidth: activeCity ? 2.5 : 1.5,
+      pointRadius: activeCity ? 3 : 1,
+      tension: 0.35,
+    };
   });
 
-  const datasets = cities.map((c,i) => ({
-    label: c,
-    data: DATA.cities[c][currentKw] || [],
-    borderColor: COLORS[i % COLORS.length],
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    pointRadius: 2,
-    pointHoverRadius: 4,
-    tension: 0.35,
-  }));
-
-  document.getElementById('legend').innerHTML = cities.map((c,i) => `
-    <span class="leg-item"><span class="leg-dot" style="background:${COLORS[i%COLORS.length]}"></span>${c}</span>`).join('');
-
-  if (trendChart) trendChart.destroy();
-  trendChart = new Chart(document.getElementById('trendChart').getContext('2d'), {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  return new Chart(ctx, {
     type: 'line',
     data: { labels, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
       scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666680', font: { size: 10 }, maxTicksLimit: 12 } },
-        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666680', font: { size: 10 } } }
+        x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 }, maxTicksLimit: 10 } },
+        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 } } }
       }
     }
   });
 }
 
-function buildCityRanking(scores) {
-  const max = scores[0].avg || 1;
-  const cities = Object.keys(DATA.cities);
-  document.getElementById('cityRanking').innerHTML = scores.map((s,i) => {
+function buildRanking(elId, scores, allCities) {
+  const max = scores[0]?.avg || 1;
+  document.getElementById(elId).innerHTML = scores.slice(0,12).map((s,i) => {
+    const idx = allCities.indexOf(s.city);
     const trend = s.last > s.first ? 'up' : s.last < s.first ? 'down' : 'flat';
-    const trendLabel = trend==='up'?'↑':trend==='down'?'↓':'→';
-    return `<div class="bar-row">
-      <span class="bar-city">${s.city}<span class="trend-tag tag-${trend}">${trendLabel}</span></span>
-      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(s.avg/max*100)}%;background:${COLORS[cities.indexOf(s.city)%COLORS.length]}"></div></div>
-      <span class="bar-val">${s.avg}</span>
+    return `<div class="rank-row">
+      <span class="rank-num">${i+1}</span>
+      <span class="rank-city">${s.city}<span class="trend-tag tag-${trend}">${trend==='up'?'↑':trend==='down'?'↓':'→'}</span></span>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width:${Math.round(s.avg/max*100)}%;background:${COLORS[idx%COLORS.length]}"></div></div>
+      <span class="rank-val">${s.avg}</span>
     </div>`;
   }).join('');
 }
 
-function buildKwChart(cities) {
-  const kwTotals = ['spor salonu','fitness','gym'].map(kw => {
-    const total = cities.reduce((s,c) => {
-      const arr = DATA.cities[c][kw] || [];
-      return s + (arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0);
-    }, 0);
-    return total;
-  });
-
-  if (kwChart) kwChart.destroy();
-  kwChart = new Chart(document.getElementById('kwChart').getContext('2d'), {
+function buildDonut(canvasId, keywords, cities, cat, colors) {
+  const totals = keywords.map(kw =>
+    cities.reduce((s,c) => { const a=DATA.cities[c][cat]?.[kw]||[]; return s+(a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0); },0)
+  );
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  return new Chart(ctx, {
     type: 'doughnut',
-    data: {
-      labels: ['Spor Salonu','Fitness','Gym'],
-      datasets: [{ data: kwTotals, backgroundColor: ['#e8ff00','#3B82F6','#10B981'], borderWidth: 0 }]
-    },
+    data: { labels: keywords.map(k=>k.charAt(0).toUpperCase()+k.slice(1)), datasets: [{ data: totals, backgroundColor: colors, borderWidth: 0 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: true, position: 'bottom', labels: { color: '#666680', font: { size: 11 }, boxWidth: 10, padding: 12 } }
-      },
-      cutout: '60%'
+      plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5a5a7a', font: { size: 10 }, boxWidth: 8, padding: 10 } } },
+      cutout: '62%'
     }
   });
 }
 
-function setKw(btn, kw) {
-  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentKw = kw;
-  render();
+let fitnessCityActive = null;
+function filterFitnessCity(city) {
+  fitnessCityActive = city;
+  const cities = getCities(fitnessRegion);
+  const allCities = Object.keys(DATA.cities);
+  if (fitnessChart) fitnessChart.destroy();
+  fitnessChart = buildLineChart('fitnessChart', cities, allCities, 'fitness', fitnessKw, 'fitnessLegend', city);
+}
+
+let wellnessCityActive = null;
+function filterWellnessCity(city) {
+  wellnessCityActive = city;
+  const cities = getCities(wellnessRegion);
+  const allCities = Object.keys(DATA.cities);
+  if (wellnessChart) wellnessChart.destroy();
+  wellnessChart = buildLineChart('wellnessChart', cities, allCities, 'wellness', wellnessKw, 'wellnessLegend', city);
+}
+
+function renderFitness() {
+  if (!DATA) return;
+  const cities = getCities(fitnessRegion);
+  const allCities = Object.keys(DATA.cities);
+  const scores = getScores(cities, 'fitness', fitnessKw);
+  document.getElementById('fitnessRegionLabel').textContent = fitnessRegion.toUpperCase();
+  renderMetrics('fitnessMetrics', scores, 'fitness', fitnessKw, '');
+  buildCityFilter('fitnessCityFilter', cities, allCities, 'filterFitnessCity');
+  if (fitnessChart) fitnessChart.destroy();
+  fitnessChart = buildLineChart('fitnessChart', cities, allCities, 'fitness', fitnessKw, 'fitnessLegend', null);
+  buildRanking('fitnessRanking', scores, allCities);
+  if (fitnessKwChart) fitnessKwChart.destroy();
+  fitnessKwChart = buildDonut('fitnessKwChart', ['spor salonu','fitness','gym'], cities, 'fitness', ['#e8ff00','#3B82F6','#66ff83']);
+}
+
+function renderWellness() {
+  if (!DATA) return;
+  const cities = getCities(wellnessRegion);
+  const allCities = Object.keys(DATA.cities);
+  const scores = getScores(cities, 'wellness', wellnessKw);
+  document.getElementById('wellnessRegionLabel').textContent = wellnessRegion.toUpperCase();
+  renderMetrics('wellnessMetrics', scores, 'wellness', wellnessKw, 'green');
+  buildCityFilter('wellnessCityFilter', cities, allCities, 'filterWellnessCity');
+  if (wellnessChart) wellnessChart.destroy();
+  wellnessChart = buildLineChart('wellnessChart', cities, allCities, 'wellness', wellnessKw, 'wellnessLegend', null);
+  buildRanking('wellnessRanking', scores, allCities);
+  if (wellnessKwChart) wellnessKwChart.destroy();
+  wellnessKwChart = buildDonut('wellnessKwChart', ['yoga','pilates','meditasyon'], cities, 'wellness', ['#66ff83','#8B5CF6','#06B6D4']);
+}
+
+function renderRising() {
+  if (!DATA) return;
+  const allCities = Object.keys(DATA.cities);
+  const dates = DATA.cities[allCities[0]]?.dates || [];
+  const labels = dates.map(d => new Date(d).toLocaleDateString('tr-TR',{month:'short',year:'2-digit'}));
+
+  const hyroxTotal = dates.map((_,i) => allCities.reduce((s,c) => s+(DATA.cities[c].rising?.hyrox?.[i]||0),0));
+  const padelTotal = dates.map((_,i) => allCities.reduce((s,c) => s+(DATA.cities[c].rising?.padel?.[i]||0),0));
+
+  const hyroxAvg = hyroxTotal.length ? Math.round(hyroxTotal.reduce((a,b)=>a+b,0)/hyroxTotal.length) : 0;
+  const padelAvg = padelTotal.length ? Math.round(padelTotal.reduce((a,b)=>a+b,0)/padelTotal.length) : 0;
+  const hyroxGrowth = hyroxTotal.length > 1 ? hyroxTotal[hyroxTotal.length-1] - hyroxTotal[0] : 0;
+  const padelGrowth = padelTotal.length > 1 ? padelTotal[padelTotal.length-1] - padelTotal[0] : 0;
+
+  document.getElementById('risingMetrics').innerHTML = `
+    <div class="metric" style="border-color:#ff6b35"><div class="metric-label">Hyrox Ort. Puan</div><div class="metric-value" style="color:#ff6b35">${hyroxAvg}</div><div class="metric-sub">↑ ${hyroxGrowth} büyüme</div></div>
+    <div class="metric" style="border-color:#00d4ff"><div class="metric-label">Padel Ort. Puan</div><div class="metric-value" style="color:#00d4ff">${padelAvg}</div><div class="metric-sub">↑ ${padelGrowth} büyüme</div></div>
+    <div class="metric"><div class="metric-label">Hyrox Zirve</div><div class="metric-value" style="color:#ff6b35">${getPeakMonthDirect(hyroxTotal, dates)}</div><div class="metric-sub">En yüksek ilgi</div></div>
+    <div class="metric"><div class="metric-label">Padel Zirve</div><div class="metric-value" style="color:#00d4ff">${getPeakMonthDirect(padelTotal, dates)}</div><div class="metric-sub">En yüksek ilgi</div></div>
+  `;
+
+  if (hyroxChart) hyroxChart.destroy();
+  hyroxChart = new Chart(document.getElementById('hyroxChart').getContext('2d'), {
+    type: 'line',
+    data: { labels, datasets: [{ data: hyroxTotal, borderColor: '#ff6b35', backgroundColor: 'rgba(255,107,53,0.08)', borderWidth: 2, pointRadius: 2, tension: 0.4, fill: true }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 }, maxTicksLimit: 8 } }, y: { min: 0, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 } } } } }
+  });
+
+  if (padelChart) padelChart.destroy();
+  padelChart = new Chart(document.getElementById('padelChart').getContext('2d'), {
+    type: 'line',
+    data: { labels, datasets: [{ data: padelTotal, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)', borderWidth: 2, pointRadius: 2, tension: 0.4, fill: true }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 }, maxTicksLimit: 8 } }, y: { min: 0, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 } } } } }
+  });
+
+  const top10 = allCities.map(c => ({
+    city: c,
+    hyrox: Math.round((DATA.cities[c].rising?.hyrox||[]).reduce((a,b)=>a+b,0)/Math.max(1,(DATA.cities[c].rising?.hyrox||[]).length)),
+    padel: Math.round((DATA.cities[c].rising?.padel||[]).reduce((a,b)=>a+b,0)/Math.max(1,(DATA.cities[c].rising?.padel||[]).length)),
+  })).sort((a,b)=>(b.hyrox+b.padel)-(a.hyrox+a.padel)).slice(0,10);
+
+  document.getElementById('risingLegend').innerHTML = `
+    <span class="leg on"><span class="leg-dot" style="background:#ff6b35"></span>Hyrox</span>
+    <span class="leg on"><span class="leg-dot" style="background:#00d4ff"></span>Padel</span>
+  `;
+
+  if (risingCityChart) risingCityChart.destroy();
+  risingCityChart = new Chart(document.getElementById('risingCityChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: top10.map(c=>c.city),
+      datasets: [
+        { label: 'Hyrox', data: top10.map(c=>c.hyrox), backgroundColor: '#ff6b35', borderRadius: 3 },
+        { label: 'Padel', data: top10.map(c=>c.padel), backgroundColor: '#00d4ff', borderRadius: 3 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#5a5a7a', font: { size: 9 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5a5a7a', font: { size: 9 } } }
+      }
+    }
+  });
+}
+
+function getPeakMonthDirect(totals, dates) {
+  if (!dates.length) return '—';
+  const idx = totals.indexOf(Math.max(...totals));
+  return new Date(dates[idx]).toLocaleDateString('tr-TR',{month:'long'});
 }
 
 loadData();
