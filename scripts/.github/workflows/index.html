@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FW Türkiye — Fitness Trend Analizi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --panel: #111118;
+    --border: #1e1e2e;
+    --accent: #e8ff00;
+    --text: #f0f0f0;
+    --muted: #666680;
+    --card: #16161f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px; border-bottom: 1px solid var(--border);
+    background: var(--panel); position: sticky; top: 0; z-index: 10;
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; color: var(--accent); }
+  .logo span { color: var(--text); }
+  .updated { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+  .controls { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .ctrl-btn {
+    font-size: 12px; padding: 6px 16px; border-radius: 99px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--muted); cursor: pointer; transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .ctrl-btn:hover, .ctrl-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+
+  .kw-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-left: 12px; text-transform: uppercase; }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .metric { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .metric-label { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); line-height: 1; }
+  .metric-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+  .chart-title { font-size: 11px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); cursor: pointer; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  .bar-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 10px; }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-city { font-size: 12px; color: var(--text); min-width: 90px; }
+  .bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .bar-val { font-size: 11px; color: var(--muted); min-width: 24px; text-align: right; }
+  .trend-tag { font-size: 9px; padding: 2px 6px; border-radius: 99px; margin-left: 4px; }
+  .tag-up { background: rgba(0,255,100,0.1); color: #00ff64; }
+  .tag-down { background: rgba(255,77,0,0.1); color: #ff4d00; }
+  .tag-flat { background: rgba(100,100,128,0.1); color: var(--muted); }
+
+  .loading { display: flex; align-items: center; justify-content: center; height: 300px; flex-direction: column; gap: 16px; color: var(--muted); }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error { background: rgba(255,77,0,0.08); border: 1px solid #ff4d00; color: #ff4d00; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">FW<span>TÜRKİYE</span></div>
+  <div class="updated" id="updatedAt">Yükleniyor...</div>
+</header>
+
+<div class="container">
+
+  <div class="controls" id="controls">
+    <span class="kw-label">Arama terimi:</span>
+    <button class="ctrl-btn active" onclick="setKw(this,'spor salonu')">Spor Salonu</button>
+    <button class="ctrl-btn" onclick="setKw(this,'fitness')">Fitness</button>
+    <button class="ctrl-btn" onclick="setKw(this,'gym')">Gym</button>
+  </div>
+
+  <div class="metrics" id="metrics">
+    <div class="loading"><div class="spinner"></div><div>Veriler yükleniyor...</div></div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Aylık arama trendi — şehir karşılaştırması</div>
+    <div class="legend" id="legend"></div>
+    <div style="position:relative;width:100%;height:280px;">
+      <canvas id="trendChart" role="img" aria-label="Şehir bazında aylık fitness arama trendi"></canvas>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <div class="chart-title">Şehir sıralaması (ort. ilgi puanı)</div>
+      <div id="cityRanking"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Arama terimi dağılımı</div>
+      <div style="position:relative;width:100%;height:220px;">
+        <canvas id="kwChart" role="img" aria-label="Spor salonu, fitness ve gym arama dağılımı"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const COLORS = ['#e8ff00','#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#EC4899','#84CC16','#F97316','#6366F1','#14B8A6','#FB923C','#A855F7','#22D3EE'];
+
+let DATA = null;
+let currentKw = 'spor salonu';
+let trendChart = null, kwChart = null;
+
+async function loadData() {
+  try {
+    const res = await fetch('data/trends.json?t=' + Date.now());
+    if (!res.ok) throw new Error('Veri dosyası bulunamadı.');
+    DATA = await res.json();
+    render();
+  } catch(e) {
+    document.getElementById('metrics').innerHTML = `<div class="error">⚠️ ${e.message}<br><br>GitHub Actions henüz çalışmamış olabilir. Repository'de Actions sekmesinden manuel başlatın.</div>`;
+    document.getElementById('updatedAt').textContent = 'Veri yok';
+  }
+}
+
+function render() {
+  if (!DATA) return;
+  const d = new Date(DATA.updated);
+  document.getElementById('updatedAt').textContent = 'Son güncelleme: ' + d.toLocaleDateString('tr-TR', {day:'numeric',month:'long',year:'numeric'});
+
+  const cities = Object.keys(DATA.cities);
+  const scores = cities.map(c => {
+    const arr = DATA.cities[c][currentKw] || [];
+    return { city: c, avg: arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0, last: arr[arr.length-1]||0, first: arr[0]||0 };
+  }).sort((a,b) => b.avg - a.avg);
+
+  const top = scores[0];
+  const fastest = [...scores].sort((a,b) => (b.last-b.first)-(a.last-a.first))[0];
+  const totalScore = scores.reduce((s,c)=>s+c.avg,0);
+  const dates = DATA.cities[cities[0]]?.dates || [];
+  const peakMonth = getPeakMonth(cities, dates);
+
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric"><div class="metric-label">En popüler şehir</div><div class="metric-value">${top.city}</div><div class="metric-sub">Ort. puan: ${top.avg}</div></div>
+    <div class="metric"><div class="metric-label">En hızlı büyüyen</div><div class="metric-value">${fastest.city}</div><div class="metric-sub">↑ ${fastest.last - fastest.first} puan artış</div></div>
+    <div class="metric"><div class="metric-label">Zirve dönem</div><div class="metric-value">${peakMonth}</div><div class="metric-sub">En yüksek ilgi</div></div>
+    <div class="metric"><div class="metric-label">Toplam trend puanı</div><div class="metric-value">${totalScore}</div><div class="metric-sub">${cities.length} şehir toplamı</div></div>
+  `;
+
+  buildTrendChart(cities, dates);
+  buildCityRanking(scores);
+  buildKwChart(cities);
+}
+
+function getPeakMonth(cities, dates) {
+  if (!dates.length) return '—';
+  const totals = dates.map((d,i) => {
+    const sum = cities.reduce((s,c) => s + (DATA.cities[c][currentKw]?.[i]||0), 0);
+    return { date: d, sum };
+  });
+  const peak = totals.sort((a,b)=>b.sum-a.sum)[0];
+  return new Date(peak.date).toLocaleDateString('tr-TR',{month:'long'});
+}
+
+function buildTrendChart(cities, dates) {
+  const labels = dates.map(d => {
+    const dt = new Date(d);
+    return dt.toLocaleDateString('tr-TR',{month:'short', year:'2-digit'});
+  });
+
+  const datasets = cities.map((c,i) => ({
+    label: c,
+    data: DATA.cities[c][currentKw] || [],
+    borderColor: COLORS[i % COLORS.length],
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    pointRadius: 2,
+    pointHoverRadius: 4,
+    tension: 0.35,
+  }));
+
+  document.getElementById('legend').innerHTML = cities.map((c,i) => `
+    <span class="leg-item"><span class="leg-dot" style="background:${COLORS[i%COLORS.length]}"></span>${c}</span>`).join('');
+
+  if (trendChart) trendChart.destroy();
+  trendChart = new Chart(document.getElementById('trendChart').getContext('2d'), {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666680', font: { size: 10 }, maxTicksLimit: 12 } },
+        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666680', font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+function buildCityRanking(scores) {
+  const max = scores[0].avg || 1;
+  const cities = Object.keys(DATA.cities);
+  document.getElementById('cityRanking').innerHTML = scores.map((s,i) => {
+    const trend = s.last > s.first ? 'up' : s.last < s.first ? 'down' : 'flat';
+    const trendLabel = trend==='up'?'↑':trend==='down'?'↓':'→';
+    return `<div class="bar-row">
+      <span class="bar-city">${s.city}<span class="trend-tag tag-${trend}">${trendLabel}</span></span>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(s.avg/max*100)}%;background:${COLORS[cities.indexOf(s.city)%COLORS.length]}"></div></div>
+      <span class="bar-val">${s.avg}</span>
+    </div>`;
+  }).join('');
+}
+
+function buildKwChart(cities) {
+  const kwTotals = ['spor salonu','fitness','gym'].map(kw => {
+    const total = cities.reduce((s,c) => {
+      const arr = DATA.cities[c][kw] || [];
+      return s + (arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0);
+    }, 0);
+    return total;
+  });
+
+  if (kwChart) kwChart.destroy();
+  kwChart = new Chart(document.getElementById('kwChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Spor Salonu','Fitness','Gym'],
+      datasets: [{ data: kwTotals, backgroundColor: ['#e8ff00','#3B82F6','#10B981'], borderWidth: 0 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { color: '#666680', font: { size: 11 }, boxWidth: 10, padding: 12 } }
+      },
+      cutout: '60%'
+    }
+  });
+}
+
+function setKw(btn, kw) {
+  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentKw = kw;
+  render();
+}
+
+loadData();
+</script>
+</body>
+</html>
