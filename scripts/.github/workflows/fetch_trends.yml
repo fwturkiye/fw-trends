@@ -1,0 +1,31 @@
+name: Fetch Trends Data
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Kütüphaneleri yükle
+        run: pip install pytrends
+
+      - name: Veri çek
+        run: python scripts/fetch_trends.py
+
+      - name: Kaydet
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data/trends.json
+          git diff --staged --quiet || git commit -m "Trends güncellendi"
+          git push
