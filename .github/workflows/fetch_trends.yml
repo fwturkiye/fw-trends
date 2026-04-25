@@ -1,31 +1,53 @@
-name: Fetch Trends Data
+from pytrends.request import TrendReq
+import json, os, time
+from datetime import datetime
 
-on:
-  schedule:
-    - cron: '0 6 * * *'
-  workflow_dispatch:
+pytrends = TrendReq(hl='tr-TR', tz=180)
 
-jobs:
-  fetch:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Python kur
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Kutuphaneleri yukle
-        run: pip install pytrends
-
-      - name: Veri cek
-        run: python scripts/fetch_trends.py
-
-      - name: Kaydet
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add data/trends.json
-          git diff --staged --quiet || git commit -m "Trends guncellendi"
-          git push
+CITIES = {
+    'Marmara': {
+        'Istanbul':  'TR-34',
+        'Bursa':     'TR-16',
+        'Kocaeli':   'TR-41',
+        'Tekirdag':  'TR-59',
+        'Balikesir': 'TR-10',
+        'Edirne':    'TR-22',
+    },
+    'Ege': {
+        'Izmir':     'TR-35',
+        'Manisa':    'TR-45',
+        'Aydin':     'TR-09',
+        'Denizli':   'TR-20',
+        'Mugla':     'TR-48',
+        'Usak':      'TR-64',
+    },
+    'Ic Anadolu': {
+        'Ankara':    'TR-06',
+        'Konya':     'TR-42',
+        'Kayseri':   'TR-38',
+        'Eskisehir': 'TR-26',
+        'Sivas':     'TR-58',
+        'Aksaray':   'TR-68',
+    },
+    'Akdeniz': {
+        'Antalya':   'TR-07',
+        'Mersin':    'TR-33',
+        'Adana':     'TR-01',
+        'Hatay':     'TR-31',
+        'Isparta':   'TR-32',
+        'Burdur':    'TR-15',
+    },
+    'Karadeniz': {
+        'Samsun':    'TR-55',
+        'Trabzon':   'TR-61',
+        'Ordu':      'TR-52',
+        'Zonguldak': 'TR-67',
+        'Kastamonu': 'TR-37',
+        'Rize':      'TR-53',
+    },
+    'Dogu Anadolu': {
+        'Erzurum':   'TR-25',
+        'Malatya':   'TR-44',
+        'Elazig':    'TR-23',
+        'Van':       'TR-65',
+        'Agri':      'TR-04',
