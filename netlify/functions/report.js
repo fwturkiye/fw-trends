@@ -35,7 +35,7 @@ exports.handler = async function(event) {
       },
       body: JSON.stringify({
         model: 'llama-3.1-8b-instant',
-        messages: [{ role: 'user', content: prompt }],
+        messages: [   {     role: 'system',     content: `You are a SaaS product combining Google Trends data analysis, McKinsey-level consulting, and deep fitness industry expertise. Your goal is to turn raw trend data into revenue-generating decisions for fitness professionals in Turkey.  Rules: - If data is weak or insufficient, say it clearly. Do not pretend strong insights. - Always include specific numbers and comparisons from the data. - Provide strategic advice tied directly to the numbers. - Avoid generic fitness tips and vague language. - Write in Turkish. Be direct, professional, and data-driven. - Structure: 1) Data Assessment 2) Key Insights with numbers 3) Strategic Recommendations 4) Risk/Opportunity score (1-10)`   },   { role: 'user', content: prompt } ],
         max_tokens: 1000,
         temperature: 0.7
       })
