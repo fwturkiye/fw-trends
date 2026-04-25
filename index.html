@@ -603,7 +603,22 @@ function renderIcerik(){
   }).join('');
 }
 
-function generateReport(){
+function generateReport(){   if(!DATA){alert('Veri yüklenmedi.');return;}   var region=document.getElementById('ai-region').value;   var cat=document.getElementById('ai-cat').value;   var btn=document.getElementById('ai-gen-btn');   var output=document.getElementById('ai-output');   btn.disabled=true;btn.textContent='ÜRETILIYOR...';   output.textContent='Veriler analiz ediliyor...';   var ct=cities(region==='Tümü'?'Tümü':region);   var catKws={fitness:['spor salonu','fitness','gym'],wellness:['yoga','pilates','meditasyon'],antrenor:['personal trainer','online fitness kocu','fitness egitmeni'],beslenme:['protein tozu','vegan beslenme','intermittent fasting'],ekipman:['kettlebell','trx','foam roller']};   var kws=catKws[cat]||[];   var summary={};   kws.forEach(function(kw){     var sc=scores(ct,cat,kw);     summary[kw]={top3:sc.slice(0,3).map(function(s){return s.city+'('+s.avg+')';}). join(', '),peak:peakMonth(ct,cat,kw),avg:sc[0]?sc[0].avg:0};   });   var prompt='Sen Türkiye fitness sektörü uzmanısın. Aşağıdaki Google Trends verilerini analiz edip profesyonel bir içgörü raporu yaz:
+
+Bölge: '+region+'
+Kategori: '+cat+'
+Tarih: '+new Date(DATA.updated).toLocaleDateString("tr-TR")+'
+
+Veriler:
+'+JSON.stringify(summary,null,2)+'
+
+Lütfen şunları içer:
+1. Genel değerlendirme (2-3 cümle)
+2. En önemli 3 içgörü (madde madde)
+3. Bu bölgedeki fitness profesyonelleri için 2 pratik öneri
+4. Sonuç
+
+Türkçe yaz, profesyonel ama anlaşılır ol. 200-300 kelime.';   fetch('/.netlify/functions/report',{     method:'POST',     headers:{'Content-Type':'application/json'},     body:JSON.stringify({prompt:prompt})   })   .then(function(r){return r.json();})   .then(function(d){     var text=d.text||d.error||'Rapor üretilemedi.';     output.textContent=text;     aiReport=text;     document.getElementById('pdf-btn').style.display='inline-block';   })   .catch(function(e){output.textContent='Hata: '+e.message;})   .finally(function(){btn.disabled=false;btn.textContent='RAPOR ÜRET';}); }(){
   if(!DATA){alert('Veri yüklenmedi.');return;}
   var region=document.getElementById('ai-region').value;
   var cat=document.getElementById('ai-cat').value;
