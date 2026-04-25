@@ -1,31 +1,156 @@
-name: Fetch Trends Data
+from pytrends.request import TrendReq
+import json, os, time
+from datetime import datetime
 
-on:
-  schedule:
-    - cron: '0 6 * * *'
-  workflow_dispatch:
+pytrends = TrendReq(hl='tr-TR', tz=180)
 
-jobs:
-  fetch:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+CITIES = {
+    'Marmara': {
+        'Istanbul':  'TR-34',
+        'Bursa':     'TR-16',
+        'Kocaeli':   'TR-41',
+        'Tekirdag':  'TR-59',
+        'Balikesir': 'TR-10',
+        'Edirne':    'TR-22',
+    },
+    'Ege': {
+        'Izmir':     'TR-35',
+        'Manisa':    'TR-45',
+        'Aydin':     'TR-09',
+        'Denizli':   'TR-20',
+        'Mugla':     'TR-48',
+        'Usak':      'TR-64',
+    },
+    'Ic Anadolu': {
+        'Ankara':    'TR-06',
+        'Konya':     'TR-42',
+        'Kayseri':   'TR-38',
+        'Eskisehir': 'TR-26',
+        'Sivas':     'TR-58',
+        'Aksaray':   'TR-68',
+    },
+    'Akdeniz': {
+        'Antalya':   'TR-07',
+        'Mersin':    'TR-33',
+        'Adana':     'TR-01',
+        'Hatay':     'TR-31',
+        'Isparta':   'TR-32',
+        'Burdur':    'TR-15',
+    },
+    'Karadeniz': {
+        'Samsun':    'TR-55',
+        'Trabzon':   'TR-61',
+        'Ordu':      'TR-52',
+        'Zonguldak': 'TR-67',
+        'Kastamonu': 'TR-37',
+        'Rize':      'TR-53',
+    },
+    'Dogu Anadolu': {
+        'Erzurum':   'TR-25',
+        'Malatya':   'TR-44',
+        'Elazig':    'TR-23',
+        'Van':       'TR-65',
+        'Agri':      'TR-04',
+        'Kars':      'TR-36',
+    },
+    'Guneydogu Anadolu': {
+        'Gaziantep': 'TR-27',
+        'Sanliurfa': 'TR-63',
+        'Diyarbakir':'TR-21',
+        'Mardin':    'TR-47',
+        'Batman':    'TR-72',
+        'Adiyaman':  'TR-02',
+    },
+}
 
-      - name: Python kur
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+CITY_LABELS = {
+    'Istanbul': 'İstanbul', 'Bursa': 'Bursa', 'Kocaeli': 'Kocaeli',
+    'Tekirdag': 'Tekirdağ', 'Balikesir': 'Balıkesir', 'Edirne': 'Edirne',
+    'Izmir': 'İzmir', 'Manisa': 'Manisa', 'Aydin': 'Aydın',
+    'Denizli': 'Denizli', 'Mugla': 'Muğla', 'Usak': 'Uşak',
+    'Ankara': 'Ankara', 'Konya': 'Konya', 'Kayseri': 'Kayseri',
+    'Eskisehir': 'Eskişehir', 'Sivas': 'Sivas', 'Aksaray': 'Aksaray',
+    'Antalya': 'Antalya', 'Mersin': 'Mersin', 'Adana': 'Adana',
+    'Hatay': 'Hatay', 'Isparta': 'Isparta', 'Burdur': 'Burdur',
+    'Samsun': 'Samsun', 'Trabzon': 'Trabzon', 'Ordu': 'Ordu',
+    'Zonguldak': 'Zonguldak', 'Kastamonu': 'Kastamonu', 'Rize': 'Rize',
+    'Erzurum': 'Erzurum', 'Malatya': 'Malatya', 'Elazig': 'Elazığ',
+    'Van': 'Van', 'Agri': 'Ağrı', 'Kars': 'Kars',
+    'Gaziantep': 'Gaziantep', 'Sanliurfa': 'Şanlıurfa', 'Diyarbakir': 'Diyarbakır',
+    'Mardin': 'Mardin', 'Batman': 'Batman', 'Adiyaman': 'Adıyaman',
+}
 
-      - name: Kutuphaneleri yukle
-        run: pip install pytrends
+REGION_LABELS = {
+    'Marmara': 'Marmara',
+    'Ege': 'Ege',
+    'Ic Anadolu': 'İç Anadolu',
+    'Akdeniz': 'Akdeniz',
+    'Karadeniz': 'Karadeniz',
+    'Dogu Anadolu': 'Doğu Anadolu',
+    'Guneydogu Anadolu': 'Güneydoğu Anadolu',
+}
 
-      - name: Veri cek
-        run: python scripts/fetch_trends.py
+CATEGORIES = {
+    'fitness':   ['spor salonu', 'fitness', 'gym'],
+    'wellness':  ['yoga', 'pilates', 'meditasyon'],
+    'rising':    ['hyrox', 'padel'],
+    'antrenor':  ['personal trainer', 'online fitness kocu', 'fitness egitmeni'],
+    'hizmet':    ['online fitness programi', 'fitness uygulamasi', 'diyetisyen'],
+    'beslenme':  ['protein tozu', 'vegan beslenme', 'intermittent fasting'],
+    'ekipman':   ['kettlebell', 'trx', 'foam roller'],
+}
 
-      - name: Kaydet
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add data/trends.json
-          git diff --staged --quiet || git commit -m "Trends guncellendi"
-          git push
+def fetch_with_retry(keywords, geo, retries=3):
+    for attempt in range(retries):
+        try:
+            pytrends.build_payload(keywords, timeframe='today 12-m', geo=geo)
+            df = pytrends.interest_over_time()
+            return df
+        except Exception as e:
+            print(f"    Deneme {attempt+1}/{retries} basarisiz: {e}")
+            if attempt < retries - 1:
+                time.sleep(5 * (attempt + 1))
+    return None
+
+result = {
+    'updated': datetime.now().isoformat(),
+    'cities': {},
+    'regions': list(REGION_LABELS.values()),
+    'region_map': REGION_LABELS,
+}
+
+total_cities = sum(len(v) for v in CITIES.values())
+processed = 0
+
+for region_key, cities in CITIES.items():
+    region_label = REGION_LABELS[region_key]
+    for city_key, geo in cities.items():
+        city_label = CITY_LABELS.get(city_key, city_key)
+        processed += 1
+        print(f"\n[{processed}/{total_cities}] {city_label} ({region_label})")
+        
+        result['cities'][city_label] = {
+            'region': region_label,
+            'geo': geo,
+        }
+        
+        for cat, keywords in CATEGORIES.items():
+            print(f"  → {cat}: {keywords}")
+            df = fetch_with_retry(keywords, geo)
+            if df is not None and not df.empty:
+                result['cities'][city_label][cat] = {kw: df[kw].tolist() for kw in keywords if kw in df.columns}
+                if 'dates' not in result['cities'][city_label]:
+                    result['cities'][city_label]['dates'] = [str(d.date()) for d in df.index]
+                print(f"     OK")
+            else:
+                print(f"     Veri yok")
+            time.sleep(2)
+        
+        time.sleep(1)
+
+os.makedirs('data', exist_ok=True)
+with open('data/trends.json', 'w', encoding='utf-8') as f:
+    json.dump(result, f, ensure_ascii=False, indent=2)
+
+print(f"\n✅ Tamamlandi: {datetime.now()}")
+print(f"   Toplam sehir: {len(result['cities'])}")
