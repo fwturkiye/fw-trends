@@ -22,45 +22,46 @@ exports.handler = async function(event) {
     if (!apiKey) {
       return {
         statusCode: 500,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: 'GROQ_API_KEY bulunamadi.' })
       };
     }
 
-    const systemPrompt = `You are a senior data analyst and fitness industry consultant specializing in the Turkish market. You analyze Google Trends data and generate actionable business intelligence for gym owners, personal trainers, and fitness entrepreneurs.
+    const systemPrompt = `Sen Türkiye fitness sektörü uzmanı, kıdemli bir veri analistisin. Google Trends verilerini analiz ederek spor salonu sahipleri, kişisel antrenörler ve fitness girişimcileri için eyleme dönüştürülebilir iş zekası üretiyorsun.
 
-STRICT RULES:
-- If data is weak (avg score below 10 or missing), explicitly state "Yetersiz veri — güvenilir analiz yapılamaz" and explain why.
-- Never generate generic fitness advice. Every sentence must reference the actual numbers provided.
-- If data shows zeros or very low scores, be honest about it.
-- Be direct. No filler words.
-- Write entirely in Turkish.
+KURALLAR:
+- Veri zayıfsa (ortalama puan 10'un altında veya eksikse), açıkça "Yetersiz veri — güvenilir analiz yapılamaz" yaz.
+- Genel fitness tavsiyeleri verme. Her cümle gerçek sayılara dayanmalı.
+- Türkçe yaz. Doğrudan ve profesyonel ol.
+- Sadece JSON döndür, başka hiçbir şey yazma.
 
-OUTPUT FORMAT (always use this exact structure):
-
-TREND OZETI
-[2-3 cumle, sadece veriye dayali]
-
-TEMEL METRIKLER
-- En yuksek ilgi puani: [sayi] — [sehir/donem]
-- Ortalama ilgi puani: [sayi]
-- Zirve donem: [ay]
-- Buyume trendi: [yukseliyor/dusuyor/sabit] — [gerceke]
-
-TEMEL ICGORULER
-- [Veri destekli icgoru 1]
-- [Veri destekli icgoru 2]
-- [Veri destekli icgoru 3]
-
-FIRSAT ALANLARI
-[Dusuk rekabet / yuksek talep alanlari — sadece veriye gore]
-
-AKSIYON PLANI
-1. [Spesifik aksiyon — kim, ne zaman, nasil]
-2. [Spesifik aksiyon]
-3. [Spesifik aksiyon]
-
-RISK / FIRSAT SKORU: [1-10] — [tek cumle gerekce]`;
+JSON FORMATI (tam olarak bu yapıyı kullan):
+{
+  "ozet": "2-3 cümle trend özeti",
+  "metrikler": [
+    {"label": "En Yüksek Puan", "value": "sayı — şehir"},
+    {"label": "Ortalama Puan", "value": "sayı"},
+    {"label": "Zirve Dönem", "value": "ay"},
+    {"label": "Büyüme Trendi", "value": "Yükseliyor/Düşüyor/Sabit"}
+  ],
+  "icgoruler": [
+    "Veri destekli içgörü 1",
+    "Veri destekli içgörü 2",
+    "Veri destekli içgörü 3"
+  ],
+  "firsatlar": "Düşük rekabet / yüksek talep alanları açıklaması",
+  "aksiyonlar": [
+    "Spesifik aksiyon 1 — kim, ne zaman, nasıl",
+    "Spesifik aksiyon 2",
+    "Spesifik aksiyon 3"
+  ],
+  "skor": 7,
+  "skor_gerekce": "Tek cümle risk/fırsat gerekçesi",
+  "sehir_skorlari": [
+    {"sehir": "İstanbul", "puan": 85},
+    {"sehir": "Ankara", "puan": 72}
+  ]
+}`;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -69,13 +70,14 @@ RISK / FIRSAT SKORU: [1-10] — [tek cumle gerekce]`;
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model: 'llama-3.3-70b-versatile',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 1000,
-        temperature: 0.5
+        max_tokens: 1500,
+        temperature: 0.3,
+        response_format: { type: 'json_object' }
       })
     });
 
@@ -84,26 +86,32 @@ RISK / FIRSAT SKORU: [1-10] — [tek cumle gerekce]`;
     if (!response.ok) {
       return {
         statusCode: 500,
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ text: 'Groq hata: ' + JSON.stringify(data) })
+        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: 'Hata: ' + (data.error?.message || JSON.stringify(data)) })
       };
     }
 
-    const text = data.choices?.[0]?.message?.content || 'Rapor üretilemedi.';
+    const content = data.choices?.[0]?.message?.content || '{}';
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch(e) {
+      parsed = { ozet: content };
+    }
 
     return {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ report: parsed })
     };
 
   } catch(e) {
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: 'Hata: ' + e.message })
     };
   }
