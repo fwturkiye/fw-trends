@@ -622,10 +622,10 @@ function generateReport(){
     summary[kw]={top3:top3,peak:peak,avg:sc[0]?sc[0].avg:0};
   });
   var prompt='Sen Türkiye fitness sektörü uzmanısın. Aşağıdaki Google Trends verilerini analiz edip profesyonel bir içgörü raporu yaz:\n\nBölge: '+region+'\nKategori: '+cat+'\nTarih: '+new Date(DATA.updated).toLocaleDateString("tr-TR")+'\n\nVeriler:\n'+JSON.stringify(summary,null,2)+'\n\nLütfen şunları içer:\n1. Genel değerlendirme (2-3 cümle)\n2. En önemli 3 içgörü (madde madde)\n3. Bu bölgedeki fitness profesyonelleri için 2 pratik öneri\n4. Sonuç\n\nTürkçe yaz, profesyonel ama anlaşılır ol. 200-300 kelime.';
-  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})})
+  fetch('/.netlify/functions/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})})
     .then(function(r){return r.json();})
     .then(function(d){
-      var text=d.content&&d.content[0]?d.content[0].text:'Rapor üretilemedi.';
+      var text=d.text||d.error||'Rapor üretilemedi.';
       output.textContent=text;
       aiReport=text;
       document.getElementById('pdf-btn').style.display='inline-block';
