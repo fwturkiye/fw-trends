@@ -332,7 +332,7 @@ var risingCharts={hyrox:null,padel:null,city:null};
 var aiReport='';
 
 function loadData(){
-  fetch('data/trends.json?t='+Date.now())
+  fetch('https://fwturkiye.github.io/fw-trends/data/trends.json?t='+Date.now())
     .then(function(r){if(!r.ok)throw new Error('Veri yok');return r.json();})
     .then(function(j){
       DATA=j;
