@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FW Türkiye — Fitness Intelligence</title>
+<title>F&W Intelligence — Fitness Market Analytics</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root{--bg:#08080e;--panel:#0f0f18;--card:#13131e;--border:#1a1a2e;--accent:#e8ff00;--green:#66ff83;--text:#f0f0f5;--muted:#5a5a7a;--muted2:#3a3a5a;--premium:#c9a84c;--hyrox:#ff6b35;--padel:#00d4ff;}
+:root{--bg:#08080e;--panel:#0f0f18;--card:#13131e;--border:#1a1a2e;--accent:#e8ff00;--green:#66ff83;--text:#f0f0f5;--muted:#5a5a7a;--muted2:#3a3a5a;--premium:#c9a84c;--hyrox:#ff6b35;--padel:#00d4ff;--red:#ff4d6d;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
-
 header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:54px;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--accent);white-space:nowrap;}
-.logo span{color:var(--text);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--text);white-space:nowrap;}
+.logo span{color:var(--accent);}
+.logo small{font-size:9px;color:var(--muted);letter-spacing:3px;display:block;margin-top:-4px;}
 .tabs{display:flex;gap:4px;flex:1;justify-content:center;overflow-x:auto;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab{font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:all 0.15s;border-radius:4px;}
@@ -21,43 +21,42 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .tab.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
 .tab.ptab{border-color:var(--premium);color:var(--premium);}
 .tab.ptab.active{background:var(--premium);color:#000;}
+.tab.ltab{opacity:0.6;}
+.tab.ltab::after{content:' 🔒';font-size:8px;}
 .updated{font-size:9px;color:var(--muted);white-space:nowrap;}
-
 .main{max-width:1200px;margin:0 auto;padding:18px 14px;}
 .section{display:none;}.section.active{display:block;}
 
-.region-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px;}
+/* REGION & KW */
+.region-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;}
 .rpill{font-size:10px;padding:4px 12px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
 .rpill:hover{border-color:var(--muted2);color:var(--text);}
 .rpill.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
-
-.kw-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.kw-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
 .kw-label{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-right:4px;}
 .kpill{font-size:10px;padding:4px 12px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
 .kpill:hover{border-color:var(--muted2);color:var(--text);}
 .kpill.active{border-color:var(--green);color:var(--green);background:rgba(102,255,131,0.05);}
 
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:16px;}
-.metric{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;position:relative;overflow:hidden;}
-.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.4;}
-.metric.gm::before{background:var(--green);}
-.metric-label{font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
-.metric-value{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);line-height:1;}
-.metric.gm .metric-value{color:var(--green);}
-.metric-sub{font-size:9px;color:var(--muted);margin-top:3px;}
-
+/* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;}
 .card-title{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
-.card-title span{color:var(--accent);font-size:8px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+@media(max-width:640px){.two-col{grid-template-columns:1fr;}}
 
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px;}
+.metric{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.metric-label{font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
+.metric-value{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);line-height:1;}
+.metric-sub{font-size:9px;color:var(--muted);margin-top:3px;}
+
+/* LEGEND */
 .legend{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
 .leg{display:flex;align-items:center;gap:3px;font-size:9px;color:var(--muted);padding:2px 6px;border-radius:99px;border:1px solid var(--border);}
 .leg-dot{width:6px;height:6px;border-radius:1px;flex-shrink:0;}
 
-.city-filter{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
-.chip{font-size:9px;padding:2px 8px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
-.chip.on{font-weight:600;color:#000;border-color:transparent;}
-
+/* RANKING */
 .rank-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);gap:6px;}
 .rank-row:last-child{border-bottom:none;}
 .rank-num{font-size:9px;color:var(--muted);min-width:14px;text-align:right;}
@@ -69,85 +68,229 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .tup{background:rgba(102,255,131,0.1);color:#66ff83;}
 .tdown{background:rgba(255,77,0,0.1);color:#ff4d00;}
 .tflat{background:rgba(90,90,122,0.12);color:var(--muted);}
-.no-data{font-size:9px;color:var(--muted);flex:1;padding-left:8px;font-style:italic;}
 
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-@media(max-width:640px){.two-col{grid-template-columns:1fr;}}
+/* FREE BLUR */
+.free-blur{position:relative;}
+.free-blur .blur-content{filter:blur(4px);pointer-events:none;user-select:none;opacity:0.5;}
+.free-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:5;background:rgba(8,8,14,0.7);border-radius:8px;}
+.free-overlay-title{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--premium);letter-spacing:2px;}
+.free-overlay-sub{font-size:10px;color:var(--muted);text-align:center;}
+.upgrade-btn{background:var(--premium);color:#000;border:none;padding:6px 16px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;border-radius:4px;}
 
-.rising-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+/* LOCK SECTION */
+.lock-section{background:var(--card);border:1px solid var(--premium);border-radius:10px;padding:30px;text-align:center;margin-bottom:12px;}
+.lock-icon{font-size:32px;margin-bottom:10px;}
+.lock-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--premium);letter-spacing:2px;margin-bottom:6px;}
+.lock-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+
+/* MARKET POSITION SNAPSHOT */
+.mps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.mps-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.mps-label{font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.mps-score{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;margin-bottom:6px;}
+.mps-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:5px;}
+.mps-bar-fill{height:100%;border-radius:2px;transition:width 0.8s ease;}
+.mps-desc{font-size:9px;color:var(--muted);line-height:1.4;}
+
+/* SWOT */
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.swot-card{border-radius:8px;padding:12px;}
+.swot-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;font-weight:600;}
+.swot-items{list-style:none;}
+.swot-items li{font-size:10px;line-height:1.5;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.swot-items li:last-child{border-bottom:none;}
+.swot-items li::before{content:'• ';opacity:0.6;}
+
+/* AI REPORT OUTPUT */
+.ai-output{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;min-height:80px;}
+
+/* PACKAGES */
+.packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:20px;}
+.pkg{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;position:relative;}
+.pkg:hover{border-color:var(--premium);}
+.pkg.selected{border-color:var(--premium);background:rgba(201,168,76,0.05);}
+.pkg.selected::after{content:'✓';position:absolute;top:8px;right:10px;color:var(--premium);font-size:14px;font-weight:700;}
+.pkg-name{font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
+.pkg-price{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--premium);line-height:1;margin-bottom:4px;}
+.pkg-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+
+/* FORM */
+.purchase-form{background:var(--card);border:1px solid var(--premium);border-radius:10px;padding:20px;margin-bottom:14px;}
+.form-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--premium);letter-spacing:2px;margin-bottom:4px;}
+.form-sub{font-size:11px;color:var(--muted);margin-bottom:16px;}
+.form-group{margin-bottom:10px;}
+.form-label{font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:12px;border-radius:4px;outline:none;transition:border-color 0.2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--premium);}
+.form-textarea{resize:vertical;min-height:70px;}
+.form-submit{background:var(--premium);color:#000;border:none;padding:10px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;cursor:pointer;border-radius:4px;width:100%;margin-top:8px;transition:background 0.15s;}
+.form-submit:hover{background:#b8943e;}
+.form-submit:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
+.form-msg{padding:10px;border-radius:6px;font-size:11px;text-align:center;margin-top:8px;display:none;}
+.form-msg.success{background:rgba(102,255,131,0.08);border:1px solid var(--green);color:var(--green);}
+.form-msg.error{background:rgba(255,77,0,0.08);border:1px solid #ff4d00;color:#ff4d00;}
+
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading{display:flex;align-items:center;justify-content:center;height:120px;gap:10px;color:var(--muted);font-size:11px;}
+
+/* RISING */
+.rising-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
 @media(max-width:560px){.rising-grid{grid-template-columns:1fr;}}
 .rising-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;}
-.rising-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:3px;}
-
-.insight-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
-.insight-row:last-child{border-bottom:none;}
-.insight-label{font-size:11px;color:var(--text);}
-.insight-badge{font-size:10px;padding:3px 10px;border-radius:99px;}
-.badge-up{background:rgba(102,255,131,0.1);color:#66ff83;}
-.badge-down{background:rgba(255,77,0,0.1);color:#ff4d00;}
-.badge-flat{background:rgba(90,90,122,0.12);color:var(--muted);}
-
-.plock{position:relative;border-radius:10px;overflow:hidden;margin-bottom:12px;}
-.plock-overlay{position:absolute;inset:0;background:rgba(8,8,14,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:10;border-radius:10px;border:1px solid var(--premium);}
-.plock-title{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--premium);letter-spacing:2px;}
-.plock-sub{font-size:10px;color:var(--muted);text-align:center;padding:0 16px;line-height:1.5;}
-.plock-btn{background:var(--premium);color:#000;border:none;padding:7px 18px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;border-radius:4px;}
-
-.ai-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;}
-.ai-output{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:11px;color:var(--text);line-height:1.7;min-height:80px;white-space:pre-wrap;}
-.ai-btn{background:var(--accent);color:#000;border:none;padding:8px 20px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;cursor:pointer;border-radius:4px;margin-top:10px;transition:background 0.15s;}
-.ai-btn:hover{background:#d4eb00;}
-.ai-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
-
-.pdf-btn{background:transparent;color:var(--premium);border:1px solid var(--premium);padding:7px 18px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;border-radius:4px;margin-left:8px;transition:all 0.15s;}
-.pdf-btn:hover{background:var(--premium);color:#000;}
-
-.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.loading{display:flex;align-items:center;justify-content:center;height:160px;gap:10px;color:var(--muted);font-size:11px;}
-.divider{height:1px;background:var(--border);margin:16px 0;}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">FW<span>TÜRKİYE</span></div>
+  <div class="logo">F&W<span> Intelligence</span><small>MARKET ANALYTICS</small></div>
   <div class="tabs">
-    <button class="tab active" onclick="setTab(this,'fitness')">Fitness</button>
+    <button class="tab ptab active" onclick="setTab(this,'premium')">★ Premium</button>
+    <button class="tab" onclick="setTab(this,'fitness')">Fitness</button>
     <button class="tab" onclick="setTab(this,'wellness')">Wellness</button>
-    <button class="tab" onclick="setTab(this,'rising')">Hyrox & Padel</button>
-    <button class="tab" onclick="setTab(this,'antrenor')">Antrenör</button>
-    <button class="tab" onclick="setTab(this,'icerik')">İçerik</button>
-    <button class="tab ptab" onclick="setTab(this,'premium')">★ Premium</button>
+    <button class="tab ltab" onclick="setTab(this,'rising')">Hyrox & Padel</button>
+    <button class="tab ltab" onclick="setTab(this,'icerik')">İçerik</button>
   </div>
   <div class="updated" id="updatedAt">—</div>
 </header>
 
 <div class="main">
 
-  <!-- FITNESS -->
-  <div class="section active" id="tab-fitness">
+  <!-- PREMIUM TAB -->
+  <div class="section active" id="tab-premium">
+    <div style="text-align:center;padding:16px 0 20px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--premium);letter-spacing:3px;">F&W INTELLIGENCE PLATFORM</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Türkiye fitness sektörünün veri destekli karar platformu</div>
+    </div>
+
+    <!-- PACKAGES -->
+    <div class="packages">
+      <div class="pkg selected" onclick="selectPkg(this)" data-name="Aylık Abonelik" data-price="990₺">
+        <div class="pkg-name">Aylık Abonelik</div>
+        <div class="pkg-price">990₺</div>
+        <div class="pkg-desc">Tüm bölgeler + haftalık AI rapor + PDF</div>
+      </div>
+      <div class="pkg" onclick="selectPkg(this)" data-name="Yıllık Abonelik" data-price="7.900₺">
+        <div class="pkg-name">Yıllık Abonelik</div>
+        <div class="pkg-price">7.900₺</div>
+        <div class="pkg-desc">%33 indirim + özel danışmanlık</div>
+      </div>
+      <div class="pkg" onclick="selectPkg(this)" data-name="Tek Rapor" data-price="2.500₺">
+        <div class="pkg-name">Tek Rapor</div>
+        <div class="pkg-price">2.500₺</div>
+        <div class="pkg-desc">Seçilen bölge detaylı PDF raporu</div>
+      </div>
+      <div class="pkg" onclick="selectPkg(this)" data-name="Kurumsal" data-price="Özel Fiyat">
+        <div class="pkg-name">Kurumsal</div>
+        <div class="pkg-price">ÖZEL</div>
+        <div class="pkg-desc">API erişimi + white-label çözüm</div>
+      </div>
+    </div>
+
+    <!-- PURCHASE FORM -->
+    <div class="purchase-form">
+      <div class="form-title">HEMEN BAŞLAYIN</div>
+      <div class="form-sub">Formu doldurun, 24 saat içinde size dönelim.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group">
+          <label class="form-label">Ad Soyad *</label>
+          <input type="text" class="form-input" id="f-name" placeholder="Adınız Soyadınız">
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-posta *</label>
+          <input type="email" class="form-input" id="f-email" placeholder="email@firma.com">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group">
+          <label class="form-label">Firma / Sektör</label>
+          <input type="text" class="form-input" id="f-company" placeholder="Firma adı">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Seçilen Paket</label>
+          <input type="text" class="form-input" id="f-package" readonly style="cursor:default;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notunuz (isteğe bağlı)</label>
+        <textarea class="form-textarea" id="f-note" placeholder="Bölge tercihiniz, özel talebiniz..."></textarea>
+      </div>
+      <button class="form-submit" id="f-submit" onclick="submitForm()">TALEP GÖNDER</button>
+      <div class="form-msg" id="f-msg"></div>
+    </div>
+
+    <!-- PREMIUM PREVIEW - AI RAPOR -->
+    <div class="card">
+      <div class="card-title">
+        <span>AI TREND RAPORU — ÖRNEK</span>
+        <span style="color:var(--premium);font-size:8px;">★ PREMIUM ÖZELLİK</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">Bölge ve kategori seçin, AI destekli içgörü raporu alın.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">
+        <select id="ai-region" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 10px;font-size:11px;border-radius:4px;font-family:'DM Sans',sans-serif;outline:none;">
+          <option value="Tümü">Tüm Türkiye</option>
+          <option value="Marmara">Marmara</option>
+          <option value="Ege">Ege</option>
+          <option value="İç Anadolu">İç Anadolu</option>
+          <option value="Akdeniz">Akdeniz</option>
+          <option value="Karadeniz">Karadeniz</option>
+          <option value="Doğu Anadolu">Doğu Anadolu</option>
+          <option value="Güneydoğu Anadolu">Güneydoğu Anadolu</option>
+        </select>
+        <select id="ai-cat" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 10px;font-size:11px;border-radius:4px;font-family:'DM Sans',sans-serif;outline:none;">
+          <option value="fitness">Fitness</option>
+          <option value="wellness">Wellness</option>
+          <option value="rising">Hyrox & Padel</option>
+        </select>
+        <button style="background:var(--premium);color:#000;border:none;padding:7px 16px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;border-radius:4px;" id="ai-gen-btn" onclick="generateReport()">RAPOR ÜRET</button>
+        <button class="pdf-btn" id="pdf-btn" onclick="downloadPDF()" style="display:none;">PDF İNDİR</button>
+      </div>
+      <div class="ai-output" id="ai-output">
+        <div style="font-size:11px;color:var(--muted);">Bölge ve kategori seçin, ardından "Rapor Üret" butonuna tıklayın.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FITNESS TAB -->
+  <div class="section" id="tab-fitness">
     <div class="region-bar" id="fit-regions"></div>
     <div class="kw-bar">
       <span class="kw-label">Terim:</span>
       <button class="kpill active" onclick="setKw('fitness',this,'spor salonu')">Spor Salonu</button>
       <button class="kpill" onclick="setKw('fitness',this,'fitness')">Fitness</button>
       <button class="kpill" onclick="setKw('fitness',this,'gym')">Gym</button>
+      <button class="kpill" onclick="setKw('fitness',this,'reformer')">Reformer</button>
     </div>
     <div class="metrics" id="fit-metrics"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div></div>
     <div class="card">
-      <div class="card-title"><span>Aylık Arama Trendi</span><span id="fit-rlabel"></span></div>
-      <div class="city-filter" id="fit-chips"></div>
+      <div class="card-title"><span>Aylık Arama Trendi</span><span id="fit-rlabel" style="color:var(--accent);font-size:8px;"></span></div>
       <div class="legend" id="fit-legend"></div>
-      <div style="position:relative;width:100%;height:250px;"><canvas id="fit-chart"></canvas></div>
+      <div style="position:relative;width:100%;height:220px;"><canvas id="fit-chart"></canvas></div>
     </div>
-    <div class="two-col">
-      <div class="card"><div class="card-title">Şehir Sıralaması</div><div id="fit-ranking"><div class="loading"><div class="spinner"></div></div></div></div>
-      <div class="card"><div class="card-title">Terim Dağılımı</div><div style="position:relative;width:100%;height:190px;"><canvas id="fit-donut"></canvas></div></div>
+    <!-- FREE: 1 insight -->
+    <div class="card">
+      <div class="card-title">Temel Insight</div>
+      <div id="fit-insight"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+    <!-- LOCKED: ranking + full analysis -->
+    <div class="free-blur">
+      <div class="blur-content">
+        <div class="two-col">
+          <div class="card"><div class="card-title">Şehir Sıralaması</div><div style="height:200px;background:var(--border);border-radius:6px;"></div></div>
+          <div class="card"><div class="card-title">Market Position Snapshot</div><div style="height:200px;background:var(--border);border-radius:6px;"></div></div>
+        </div>
+        <div class="card"><div class="card-title">SWOT Analizi</div><div style="height:150px;background:var(--border);border-radius:6px;"></div></div>
+      </div>
+      <div class="free-overlay">
+        <div style="font-size:24px;">🔒</div>
+        <div class="free-overlay-title">Premium İçerik</div>
+        <div class="free-overlay-sub">Şehir sıralaması, Market Position Snapshot,<br>SWOT ve fırsat analizi premium üyelere özeldir.</div>
+        <button class="upgrade-btn" onclick="setTab(document.querySelector('.tab.ptab'),'premium')">PREMIUM'A GEÇ</button>
+      </div>
     </div>
   </div>
 
-  <!-- WELLNESS -->
+  <!-- WELLNESS TAB -->
   <div class="section" id="tab-wellness">
     <div class="region-bar" id="wel-regions"></div>
     <div class="kw-bar">
@@ -158,159 +301,60 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     </div>
     <div class="metrics" id="wel-metrics"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div></div>
     <div class="card">
-      <div class="card-title"><span>Wellness Arama Trendi</span><span id="wel-rlabel" style="color:var(--green)"></span></div>
-      <div class="city-filter" id="wel-chips"></div>
+      <div class="card-title"><span>Wellness Arama Trendi</span><span id="wel-rlabel" style="color:var(--green);font-size:8px;"></span></div>
       <div class="legend" id="wel-legend"></div>
-      <div style="position:relative;width:100%;height:250px;"><canvas id="wel-chart"></canvas></div>
+      <div style="position:relative;width:100%;height:220px;"><canvas id="wel-chart"></canvas></div>
     </div>
-    <div class="two-col">
-      <div class="card"><div class="card-title">Şehir Sıralaması</div><div id="wel-ranking"><div class="loading"><div class="spinner"></div></div></div></div>
-      <div class="card"><div class="card-title">Terim Dağılımı</div><div style="position:relative;width:100%;height:190px;"><canvas id="wel-donut"></canvas></div></div>
-    </div>
-  </div>
-
-  <!-- HYROX & PADEL -->
-  <div class="section" id="tab-rising">
-    <div class="metrics" id="ris-metrics"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div></div>
-    <div class="rising-grid">
-      <div class="rising-card">
-        <div class="rising-title" style="color:var(--hyrox)">HYROX</div>
-        <div style="font-size:9px;color:var(--muted);margin-bottom:12px;">Fonksiyonel fitness yarışma trendi</div>
-        <div style="position:relative;width:100%;height:190px;"><canvas id="hyrox-chart"></canvas></div>
-      </div>
-      <div class="rising-card">
-        <div class="rising-title" style="color:var(--padel)">PADEL</div>
-        <div style="font-size:9px;color:var(--muted);margin-bottom:12px;">Raket sporları yükseliş trendi</div>
-        <div style="position:relative;width:100%;height:190px;"><canvas id="padel-chart"></canvas></div>
-      </div>
-    </div>
-    <div class="card" style="margin-top:12px;">
-      <div class="card-title">Şehir Bazında Karşılaştırma — Top 10</div>
-      <div class="legend" id="ris-legend"></div>
-      <div style="position:relative;width:100%;height:260px;"><canvas id="ris-city-chart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- ANTRENÖR -->
-  <div class="section" id="tab-antrenor">
-    <div class="region-bar" id="ant-regions"></div>
-    <div class="kw-bar">
-      <span class="kw-label">Kategori:</span>
-      <button class="kpill active" onclick="setKw('antrenor',this,'personal trainer')">Personal Trainer</button>
-      <button class="kpill" onclick="setKw('antrenor',this,'online fitness kocu')">Online Koç</button>
-      <button class="kpill" onclick="setKw('antrenor',this,'fitness egitmeni')">Fitness Eğitmeni</button>
-    </div>
-    <div class="metrics" id="ant-metrics"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div></div>
     <div class="card">
-      <div class="card-title"><span>Antrenör Talep Trendi</span><span id="ant-rlabel" style="color:#8B5CF6"></span></div>
-      <div class="city-filter" id="ant-chips"></div>
-      <div class="legend" id="ant-legend"></div>
-      <div style="position:relative;width:100%;height:250px;"><canvas id="ant-chart"></canvas></div>
+      <div class="card-title">Temel Insight</div>
+      <div id="wel-insight"><div class="loading"><div class="spinner"></div></div></div>
     </div>
-    <div class="two-col">
-      <div class="card"><div class="card-title">Şehir Sıralaması — Antrenör Talebi</div><div id="ant-ranking"><div class="loading"><div class="spinner"></div></div></div></div>
-      <div class="card">
-        <div class="card-title">Online vs Yüz Yüze Talep</div>
-        <div style="position:relative;width:100%;height:190px;"><canvas id="ant-donut"></canvas></div>
-      </div>
-    </div>
-    <div class="card" style="margin-top:12px;">
-      <div class="card-title">Dijital Hizmet Talebi</div>
-      <div class="kw-bar" style="margin-bottom:12px;">
-        <button class="kpill active" onclick="setKw('hizmet',this,'online fitness programi')">Online Program</button>
-        <button class="kpill" onclick="setKw('hizmet',this,'fitness uygulamasi')">Fitness App</button>
-        <button class="kpill" onclick="setKw('hizmet',this,'diyetisyen')">Diyetisyen</button>
-      </div>
-      <div class="legend" id="hiz-legend"></div>
-      <div style="position:relative;width:100%;height:220px;"><canvas id="hiz-chart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- İÇERİK -->
-  <div class="section" id="tab-icerik">
-    <div class="card">
-      <div class="card-title">Bu Ay En Çok Yükselen Trendler ↑</div>
-      <div id="icerik-rising"><div class="loading"><div class="spinner"></div></div></div>
-    </div>
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">Beslenme Trendleri</div>
-        <div class="kw-bar" style="margin-bottom:10px;">
-          <button class="kpill active" onclick="setKw('beslenme',this,'protein tozu')">Protein Tozu</button>
-          <button class="kpill" onclick="setKw('beslenme',this,'vegan beslenme')">Vegan</button>
-          <button class="kpill" onclick="setKw('beslenme',this,'intermittent fasting')">IF</button>
+    <div class="free-blur">
+      <div class="blur-content">
+        <div class="two-col">
+          <div class="card"><div class="card-title">Şehir Sıralaması</div><div style="height:200px;background:var(--border);border-radius:6px;"></div></div>
+          <div class="card"><div class="card-title">Market Position Snapshot</div><div style="height:200px;background:var(--border);border-radius:6px;"></div></div>
         </div>
-        <div class="legend" id="bes-legend"></div>
-        <div style="position:relative;width:100%;height:200px;"><canvas id="bes-chart"></canvas></div>
       </div>
-      <div class="card">
-        <div class="card-title">Ekipman Trendleri</div>
-        <div class="kw-bar" style="margin-bottom:10px;">
-          <button class="kpill active" onclick="setKw('ekipman',this,'kettlebell')">Kettlebell</button>
-          <button class="kpill" onclick="setKw('ekipman',this,'trx')">TRX</button>
-          <button class="kpill" onclick="setKw('ekipman',this,'foam roller')">Foam Roller</button>
-        </div>
-        <div class="legend" id="ekp-legend"></div>
-        <div style="position:relative;width:100%;height:200px;"><canvas id="ekp-chart"></canvas></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Bölgeye Göre En Çok Aranan İçerik</div>
-      <div id="icerik-region"><div class="loading"><div class="spinner"></div></div></div>
-    </div>
-  </div>
-
-  <!-- PREMIUM -->
-  <div class="section" id="tab-premium">
-    <div style="text-align:center;padding:24px 0 18px;">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--premium);letter-spacing:3px;">PREMIUM ANALİTİK</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:5px;">Türkiye fitness sektörünün en kapsamlı veri platformu</div>
-    </div>
-    <div class="metrics" style="margin-bottom:16px;">
-      <div class="metric" style="border-color:var(--premium);"><div class="metric-label">Aylık Abonelik</div><div class="metric-value" style="color:var(--premium);">990₺</div><div class="metric-sub">Tüm bölgeler + haftalık rapor</div></div>
-      <div class="metric" style="border-color:var(--premium);"><div class="metric-label">Yıllık Abonelik</div><div class="metric-value" style="color:var(--premium);">7.900₺</div><div class="metric-sub">%33 indirim + danışmanlık</div></div>
-      <div class="metric" style="border-color:var(--premium);"><div class="metric-label">Tek Rapor</div><div class="metric-value" style="color:var(--premium);">2.500₺</div><div class="metric-sub">Seçilen bölge PDF raporu</div></div>
-      <div class="metric" style="border-color:var(--premium);"><div class="metric-label">Kurumsal</div><div class="metric-value" style="color:var(--premium);">ÖZEL</div><div class="metric-sub">API + white-label</div></div>
-    </div>
-
-    <div class="ai-box">
-      <div class="card-title" style="margin-bottom:10px;">AI Trend Raporu <span style="color:var(--green)">● Ücretsiz Örnek</span></div>
-      <div style="font-size:10px;color:var(--muted);margin-bottom:10px;">Seçili bölge ve kategori için yapay zeka destekli içgörü raporu üretin.</div>
-      <div class="kw-bar" style="margin-bottom:10px;">
-        <select id="ai-region" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:5px 10px;font-size:11px;border-radius:4px;font-family:'DM Sans',sans-serif;">
-          <option value="Tümü">Tüm Türkiye</option>
-          <option value="Marmara">Marmara</option>
-          <option value="Ege">Ege</option>
-          <option value="İç Anadolu">İç Anadolu</option>
-          <option value="Akdeniz">Akdeniz</option>
-          <option value="Karadeniz">Karadeniz</option>
-          <option value="Doğu Anadolu">Doğu Anadolu</option>
-          <option value="Güneydoğu Anadolu">Güneydoğu Anadolu</option>
-        </select>
-        <select id="ai-cat" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:5px 10px;font-size:11px;border-radius:4px;font-family:'DM Sans',sans-serif;">
-          <option value="fitness">Fitness</option>
-          <option value="wellness">Wellness</option>
-          <option value="antrenor">Antrenör Talebi</option>
-          <option value="beslenme">Beslenme</option>
-          <option value="ekipman">Ekipman</option>
-        </select>
-        <button class="ai-btn" id="ai-gen-btn" onclick="generateReport()">RAPOR ÜRET</button>
-        <button class="pdf-btn" id="pdf-btn" onclick="downloadPDF()" style="display:none;">PDF İNDİR</button>
-      </div>
-      <div class="ai-output" id="ai-output">Rapor üretmek için bölge ve kategori seçin, ardından "Rapor Üret" butonuna tıklayın.</div>
-    </div>
-
-    <div class="plock">
-      <div class="card" style="filter:blur(2px);pointer-events:none;opacity:0.35;">
-        <div class="card-title">Rakip Yoğunluk Haritası</div>
-        <div style="height:160px;background:var(--border);border-radius:6px;"></div>
-      </div>
-      <div class="plock-overlay">
+      <div class="free-overlay">
         <div style="font-size:24px;">🔒</div>
-        <div class="plock-title">Rakip Analizi</div>
-        <div class="plock-sub">Her şehirde rakip sayısı, pazar boşlukları ve büyüme fırsatları.</div>
-        <button class="plock-btn" onclick="alert('İletişim: info@fwturkiye.net')">SATIN AL</button>
+        <div class="free-overlay-title">Premium İçerik</div>
+        <div class="free-overlay-sub">Detaylı analiz ve stratejik içgörüler<br>premium üyelere özeldir.</div>
+        <button class="upgrade-btn" onclick="setTab(document.querySelector('.tab.ptab'),'premium')">PREMIUM'A GEÇ</button>
       </div>
+    </div>
+  </div>
+
+  <!-- HYROX & PADEL TAB -->
+  <div class="section" id="tab-rising">
+    <div style="background:var(--card);border:1px solid var(--premium);border-radius:10px;padding:30px;text-align:center;margin-bottom:12px;">
+      <div style="font-size:32px;margin-bottom:12px;">🔒</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--premium);letter-spacing:2px;margin-bottom:8px;">HYROX & PADEL ANALİZİ</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Türkiye'nin en hızlı büyüyen spor trendlerinin detaylı analizi.<br>Şehir bazında talep haritası, büyüme projeksiyonları ve yatırım fırsatları.</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
+        <div style="background:rgba(255,107,53,0.1);border:1px solid var(--hyrox);border-radius:8px;padding:12px 20px;text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--hyrox);">HYROX</div>
+          <div style="font-size:10px;color:var(--muted);">Fonksiyonel Fitness</div>
+        </div>
+        <div style="background:rgba(0,212,255,0.1);border:1px solid var(--padel);border-radius:8px;padding:12px 20px;text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--padel);">PADEL</div>
+          <div style="font-size:10px;color:var(--muted);">Raket Sporları</div>
+        </div>
+      </div>
+      <button class="upgrade-btn" style="padding:10px 28px;font-size:15px;" onclick="setTab(document.querySelector('.tab.ptab'),'premium')">PREMIUM'A GEÇ</button>
+    </div>
+  </div>
+
+  <!-- İÇERİK TAB -->
+  <div class="section" id="tab-icerik">
+    <div style="background:var(--card);border:1px solid var(--premium);border-radius:10px;padding:30px;text-align:center;margin-bottom:12px;">
+      <div style="font-size:32px;margin-bottom:12px;">🔒</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--premium);letter-spacing:2px;margin-bottom:8px;">İÇERİK & SEKTÖR ANALİZİ</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
+        En çok yükselen trendler, fırsat alanları ve rekabet analizi.<br>
+        Butik stüdyo, reformer pilates ve yükselen sektör içgörüleri.
+      </div>
+      <button class="upgrade-btn" style="padding:10px 28px;font-size:15px;" onclick="setTab(document.querySelector('.tab.ptab'),'premium')">PREMIUM'A GEÇ</button>
     </div>
   </div>
 
@@ -321,15 +365,11 @@ var C=['#e8ff00','#3B82F6','#66ff83','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#E
 var REGIONS=['Tümü','Marmara','Ege','İç Anadolu','Akdeniz','Karadeniz','Doğu Anadolu','Güneydoğu Anadolu'];
 var DATA=null;
 var STATE={
-  fitness:{region:'Tümü',kw:'spor salonu',city:null,chart:null,donut:null},
-  wellness:{region:'Tümü',kw:'yoga',city:null,chart:null,donut:null},
-  antrenor:{region:'Tümü',kw:'personal trainer',city:null,chart:null,donut:null},
-  hizmet:{region:'Tümü',kw:'online fitness programi',city:null,chart:null},
-  beslenme:{region:'Tümü',kw:'protein tozu',city:null,chart:null},
-  ekipman:{region:'Tümü',kw:'kettlebell',city:null,chart:null},
+  fitness:{region:'Tümü',kw:'spor salonu',chart:null},
+  wellness:{region:'Tümü',kw:'yoga',chart:null}
 };
-var risingCharts={hyrox:null,padel:null,city:null};
-var aiReport='';
+var aiReport=null;
+var selectedPkg={name:'Aylık Abonelik',price:'990₺'};
 
 function loadData(){
   fetch('https://fwturkiye.github.io/fw-trends/data/trends.json?t='+Date.now())
@@ -338,10 +378,12 @@ function loadData(){
       DATA=j;
       var d=new Date(DATA.updated);
       document.getElementById('updatedAt').textContent=d.toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'});
-      buildAllRegions();
-      renderFitness();renderWellness();renderRising();renderAntrenor();renderIcerik();
+      buildRegionBars();
+      renderFitness();
+      renderWellness();
+      document.getElementById('f-package').value=selectedPkg.name+' — '+selectedPkg.price;
     })
-    .catch(function(e){document.getElementById('updatedAt').textContent='Hata';console.error(e);});
+    .catch(function(e){document.getElementById('updatedAt').textContent='Veri yüklenemedi';console.error(e);});
 }
 
 function cities(region){
@@ -350,42 +392,30 @@ function cities(region){
   return all.filter(function(c){return DATA.cities[c].region===region;});
 }
 
-function buildAllRegions(){
-  ['fit','wel','ant'].forEach(function(prefix){
-    var tabMap={fit:'fitness',wel:'wellness',ant:'antrenor'};
-    var el=document.getElementById(prefix+'-regions');
+function buildRegionBars(){
+  ['fit','wel'].forEach(function(p){
+    var el=document.getElementById(p+'-regions');
     el.innerHTML=REGIONS.map(function(r){
-      return '<button class="rpill'+(r==='Tümü'?' active':'')+'" onclick="setRegion(\''+prefix+'\',this,\''+r+'\')">'+r+'</button>';
+      return '<button class="rpill'+(r==='Tümü'?' active':'')+'" onclick="setRegion(\''+p+'\',this,\''+r+'\')">'+r+'</button>';
     }).join('');
   });
 }
 
-function setRegion(prefix,btn,region){
-  var tabMap={fit:'fitness',wel:'wellness',ant:'antrenor'};
-  var tab=tabMap[prefix];
-  document.getElementById(prefix+'-regions').querySelectorAll('.rpill').forEach(function(b){b.classList.remove('active');});
+function setRegion(p,btn,region){
+  document.getElementById(p+'-regions').querySelectorAll('.rpill').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
+  var tab=p==='fit'?'fitness':'wellness';
   STATE[tab].region=region;
-  STATE[tab].city=null;
   if(tab==='fitness')renderFitness();
-  else if(tab==='wellness')renderWellness();
-  else renderAntrenor();
+  else renderWellness();
 }
 
 function setKw(tab,btn,kw){
-  var prefix={fitness:'fit',wellness:'wel',antrenor:'ant',hizmet:'hiz',beslenme:'bes',ekipman:'ekp'}[tab];
-  if(prefix){
-    var bar=btn.closest('.kw-bar')||btn.parentElement;
-    bar.querySelectorAll('.kpill').forEach(function(b){b.classList.remove('active');});
-  }
+  btn.closest('.kw-bar').querySelectorAll('.kpill').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   STATE[tab].kw=kw;
   if(tab==='fitness')renderFitness();
-  else if(tab==='wellness')renderWellness();
-  else if(tab==='antrenor')renderAntrenor();
-  else if(tab==='hizmet')renderHizmet();
-  else if(tab==='beslenme')renderBeslenme();
-  else if(tab==='ekipman')renderEkipman();
+  else renderWellness();
 }
 
 function setTab(btn,tab){
@@ -393,6 +423,14 @@ function setTab(btn,tab){
   btn.classList.add('active');
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
   document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function selectPkg(el){
+  document.querySelectorAll('.pkg').forEach(function(p){p.classList.remove('selected');});
+  el.classList.add('selected');
+  selectedPkg={name:el.dataset.name,price:el.dataset.price};
+  var pkgEl=document.getElementById('f-package');
+  if(pkgEl)pkgEl.value=selectedPkg.name+' — '+selectedPkg.price;
 }
 
 function scores(cities,cat,kw){
@@ -412,217 +450,92 @@ function peakMonth(cities,cat,kw){
   return pk?new Date(pk.date).toLocaleDateString('tr-TR',{month:'long'}):'—';
 }
 
-function renderMetrics(elId,sc,cat,kw,cls){
-  if(!sc.length)return;
-  var top=sc[0],fastest=sc.slice().sort(function(a,b){return(b.last-b.first)-(a.last-a.first);})[0];
-  var total=sc.reduce(function(s,c){return s+c.avg;},0);
-  var peak=peakMonth(sc.map(function(s){return s.city;}),cat,kw);
-  document.getElementById(elId).innerHTML=
-    '<div class="metric '+cls+'"><div class="metric-label">En Popüler</div><div class="metric-value">'+top.city+'</div><div class="metric-sub">Ort. '+top.avg+'</div></div>'+
-    '<div class="metric '+cls+'"><div class="metric-label">En Hızlı</div><div class="metric-value">'+fastest.city+'</div><div class="metric-sub">↑ '+Math.max(0,fastest.last-fastest.first)+' puan</div></div>'+
-    '<div class="metric '+cls+'"><div class="metric-label">Zirve</div><div class="metric-value">'+peak+'</div><div class="metric-sub">En yüksek ilgi</div></div>'+
-    '<div class="metric '+cls+'"><div class="metric-label">Toplam</div><div class="metric-value">'+total+'</div><div class="metric-sub">'+sc.length+' şehir</div></div>';
-}
-
-function buildChips(elId,cities,allCities,filterFn){
-  var html='<button class="chip on" style="background:var(--muted2);color:var(--text)" onclick="'+filterFn+'(null)">Tümü</button>';
-  cities.forEach(function(c,i){var idx=allCities.indexOf(c);html+='<button class="chip on" style="background:'+C[idx%C.length]+'" onclick="'+filterFn+'(\''+c+'\')">'+c+'</button>';});
-  document.getElementById(elId).innerHTML=html;
-}
-
-function buildLine(canvasId,cities,allCities,cat,kw,legendId,activeCity){
+function buildLine(canvasId,cities,allCities,cat,kw,legendId){
   var valid=cities.filter(function(c){return DATA.cities[c]&&DATA.cities[c].dates;});
   if(!valid.length)return null;
   var dates=DATA.cities[valid[0]].dates||[];
   var labels=dates.map(function(d){return new Date(d).toLocaleDateString('tr-TR',{month:'short',year:'2-digit'});});
-  var disp=activeCity?[activeCity]:valid.slice(0,8);
+  var disp=valid.slice(0,7);
   document.getElementById(legendId).innerHTML=disp.map(function(c){var idx=allCities.indexOf(c);return'<span class="leg"><span class="leg-dot" style="background:'+C[idx%C.length]+'"></span>'+c+'</span>';}).join('');
-  var datasets=disp.map(function(c){var idx=allCities.indexOf(c);return{label:c,data:(DATA.cities[c][cat]&&DATA.cities[c][cat][kw])?DATA.cities[c][cat][kw]:[],borderColor:C[idx%C.length],backgroundColor:'transparent',borderWidth:activeCity?2.5:1.8,pointRadius:activeCity?3:1,tension:0.35};});
+  var datasets=disp.map(function(c){var idx=allCities.indexOf(c);return{label:c,data:(DATA.cities[c][cat]&&DATA.cities[c][cat][kw])?DATA.cities[c][cat][kw]:[],borderColor:C[idx%C.length],backgroundColor:'transparent',borderWidth:1.8,pointRadius:1,tension:0.35};});
   var ctx=document.getElementById(canvasId).getContext('2d');
   return new Chart(ctx,{type:'line',data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:9},maxTicksLimit:10}},y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:9}}}}}});
 }
 
-function buildRanking(elId,sc,allCities){
-  var max=sc[0]?sc[0].avg:1;
-  document.getElementById(elId).innerHTML=sc.slice(0,12).map(function(s,i){
-    var idx=allCities.indexOf(s.city);
-    var trend=s.last>s.first?'up':s.last<s.first?'down':'flat';
-    var arrow=trend==='up'?'↑':trend==='down'?'↓':'→';
-    var noData=s.avg===0;
-    return'<div class="rank-row"><span class="rank-num">'+(i+1)+'</span><span class="rank-city">'+s.city+(noData?'':'<span class="ttag t'+trend+'">'+arrow+'</span>')+'</span>'+(noData?'<span class="no-data">Yetersiz veri</span>':'<div class="rank-bar-wrap"><div class="rank-bar" style="width:'+Math.round(s.avg/max*100)+'%;background:'+C[idx%C.length]+'"></div></div>')+'<span class="rank-val">'+(noData?'—':s.avg)+'</span></div>';
-  }).join('');
-}
-
-function buildDonut(canvasId,labels,data,colors){
-  var ctx=document.getElementById(canvasId).getContext('2d');
-  return new Chart(ctx,{type:'doughnut',data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'#5a5a7a',font:{size:9},boxWidth:7,padding:8}}},cutout:'62%'}});
+function buildInsight(elId,sc,cat,kw,region){
+  var valid=sc.filter(function(s){return s.avg>0;});
+  if(!valid.length){document.getElementById(elId).innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px;">Bu bölge/terim için yeterli veri bulunmuyor.</div>';return;}
+  var top=valid[0];
+  var trend=top.last>top.first?'yükseliyor':'düşüyor';
+  var trendColor=top.last>top.first?'var(--green)':'#ff4d00';
+  var peak=peakMonth(valid.map(function(s){return s.city;}),cat,kw);
+  document.getElementById(elId).innerHTML=
+    '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;">'+
+    '<span style="color:var(--accent);font-size:18px;flex-shrink:0;">→</span>'+
+    '<div style="font-size:11px;color:var(--text);line-height:1.6;">'+
+    '<strong style="color:var(--accent);">'+top.city+'</strong> bu dönemde en yüksek ilgiyi çeken şehir '+
+    '(ort. puan: <strong>'+top.avg+'</strong>). Talep <span style="color:'+trendColor+';">'+trend+'</span>. '+
+    'Zirve dönem: <strong>'+peak+'</strong>. '+
+    (valid.length>1?'<strong style="color:var(--muted);">'+valid[1].city+'</strong> ('+valid[1].avg+') ikinci sırada.':'')+
+    '</div></div>';
 }
 
 function renderFitness(){
   if(!DATA)return;
   var ct=cities(STATE.fitness.region),all=Object.keys(DATA.cities),sc=scores(ct,'fitness',STATE.fitness.kw);
+  var valid=sc.filter(function(s){return s.avg>0;});
+  var top=valid[0]||{city:'—',avg:0};
+  var fastest=valid.slice().sort(function(a,b){return(b.last-b.first)-(a.last-a.first);})[0]||top;
+  var peak=peakMonth(ct,'fitness',STATE.fitness.kw);
   document.getElementById('fit-rlabel').textContent=STATE.fitness.region;
-  renderMetrics('fit-metrics',sc,'fitness',STATE.fitness.kw,'');
-  buildChips('fit-chips',ct,all,'filterFit');
+  document.getElementById('fit-metrics').innerHTML=
+    '<div class="metric"><div class="metric-label">En Popüler Şehir</div><div class="metric-value">'+top.city+'</div><div class="metric-sub">Ort. '+top.avg+'</div></div>'+
+    '<div class="metric"><div class="metric-label">En Hızlı Büyüyen</div><div class="metric-value">'+fastest.city+'</div><div class="metric-sub">&#8593; '+(fastest.last-fastest.first)+' puan</div></div>'+
+    '<div class="metric"><div class="metric-label">Zirve Dönem</div><div class="metric-value">'+peak+'</div><div class="metric-sub">En yüksek ilgi</div></div>'+
+    '<div class="metric"><div class="metric-label">Veri Olan Şehir</div><div class="metric-value">'+valid.length+'</div><div class="metric-sub">'+ct.length+' şehirden</div></div>';
   if(STATE.fitness.chart)STATE.fitness.chart.destroy();
-  STATE.fitness.chart=buildLine('fit-chart',ct,all,'fitness',STATE.fitness.kw,'fit-legend',STATE.fitness.city);
-  buildRanking('fit-ranking',sc,all);
-  if(STATE.fitness.donut)STATE.fitness.donut.destroy();
-  var kws=['spor salonu','fitness','gym'];
-  var totals=kws.map(function(kw){return ct.reduce(function(s,c){var a=(DATA.cities[c].fitness&&DATA.cities[c].fitness[kw])?DATA.cities[c].fitness[kw]:[];return s+(a.length?Math.round(a.reduce(function(x,y){return x+y;},0)/a.length):0);},0);});
-  STATE.fitness.donut=buildDonut('fit-donut',['Spor Salonu','Fitness','Gym'],totals,['#e8ff00','#3B82F6','#66ff83']);
+  STATE.fitness.chart=buildLine('fit-chart',ct,all,'fitness',STATE.fitness.kw,'fit-legend');
+  buildInsight('fit-insight',sc,'fitness',STATE.fitness.kw,STATE.fitness.region);
 }
-
-function filterFit(city){STATE.fitness.city=city;var ct=cities(STATE.fitness.region),all=Object.keys(DATA.cities);if(STATE.fitness.chart)STATE.fitness.chart.destroy();STATE.fitness.chart=buildLine('fit-chart',ct,all,'fitness',STATE.fitness.kw,'fit-legend',city);}
 
 function renderWellness(){
   if(!DATA)return;
   var ct=cities(STATE.wellness.region),all=Object.keys(DATA.cities),sc=scores(ct,'wellness',STATE.wellness.kw);
+  var valid=sc.filter(function(s){return s.avg>0;});
+  var top=valid[0]||{city:'—',avg:0};
+  var fastest=valid.slice().sort(function(a,b){return(b.last-b.first)-(a.last-a.first);})[0]||top;
+  var peak=peakMonth(ct,'wellness',STATE.wellness.kw);
   document.getElementById('wel-rlabel').textContent=STATE.wellness.region;
-  renderMetrics('wel-metrics',sc,'wellness',STATE.wellness.kw,'gm');
-  buildChips('wel-chips',ct,all,'filterWel');
+  document.getElementById('wel-metrics').innerHTML=
+    '<div class="metric gm"><div class="metric-label">En Popüler Şehir</div><div class="metric-value">'+top.city+'</div><div class="metric-sub">Ort. '+top.avg+'</div></div>'+
+    '<div class="metric gm"><div class="metric-label">En Hızlı Büyüyen</div><div class="metric-value">'+fastest.city+'</div><div class="metric-sub">&#8593; '+(fastest.last-fastest.first)+' puan</div></div>'+
+    '<div class="metric gm"><div class="metric-label">Zirve Dönem</div><div class="metric-value">'+peak+'</div><div class="metric-sub">En yüksek ilgi</div></div>'+
+    '<div class="metric gm"><div class="metric-label">Veri Olan Şehir</div><div class="metric-value">'+valid.length+'</div><div class="metric-sub">'+ct.length+' şehirden</div></div>';
   if(STATE.wellness.chart)STATE.wellness.chart.destroy();
-  STATE.wellness.chart=buildLine('wel-chart',ct,all,'wellness',STATE.wellness.kw,'wel-legend',STATE.wellness.city);
-  buildRanking('wel-ranking',sc,all);
-  if(STATE.wellness.donut)STATE.wellness.donut.destroy();
-  var kws=['yoga','pilates','meditasyon'];
-  var totals=kws.map(function(kw){return ct.reduce(function(s,c){var a=(DATA.cities[c].wellness&&DATA.cities[c].wellness[kw])?DATA.cities[c].wellness[kw]:[];return s+(a.length?Math.round(a.reduce(function(x,y){return x+y;},0)/a.length):0);},0);});
-  STATE.wellness.donut=buildDonut('wel-donut',['Yoga','Pilates','Meditasyon'],totals,['#66ff83','#8B5CF6','#06B6D4']);
-}
-
-function filterWel(city){STATE.wellness.city=city;var ct=cities(STATE.wellness.region),all=Object.keys(DATA.cities);if(STATE.wellness.chart)STATE.wellness.chart.destroy();STATE.wellness.chart=buildLine('wel-chart',ct,all,'wellness',STATE.wellness.kw,'wel-legend',city);}
-
-function renderRising(){
-  if(!DATA)return;
-  var all=Object.keys(DATA.cities),fc=all.find(function(c){return DATA.cities[c].dates;});
-  if(!fc)return;
-  var dates=DATA.cities[fc].dates||[];
-  var labels=dates.map(function(d){return new Date(d).toLocaleDateString('tr-TR',{month:'short',year:'2-digit'});});
-  var hyroxT=dates.map(function(_,i){return all.reduce(function(s,c){return s+((DATA.cities[c].rising&&DATA.cities[c].rising.hyrox&&DATA.cities[c].rising.hyrox[i])||0);},0);});
-  var padelT=dates.map(function(_,i){return all.reduce(function(s,c){return s+((DATA.cities[c].rising&&DATA.cities[c].rising.padel&&DATA.cities[c].rising.padel[i])||0);},0);});
-  var ha=hyroxT.length?Math.round(hyroxT.reduce(function(a,b){return a+b;},0)/hyroxT.length):0;
-  var pa=padelT.length?Math.round(padelT.reduce(function(a,b){return a+b;},0)/padelT.length):0;
-  var hg=hyroxT.length>1?hyroxT[hyroxT.length-1]-hyroxT[0]:0;
-  var pg=padelT.length>1?padelT[padelT.length-1]-padelT[0]:0;
-  function pkm(t,d){if(!d.length||!t.length)return'—';var mx=Math.max.apply(null,t);return new Date(d[t.indexOf(mx)]).toLocaleDateString('tr-TR',{month:'long'});}
-  document.getElementById('ris-metrics').innerHTML=
-    '<div class="metric" style="border-color:var(--hyrox)"><div class="metric-label">Hyrox Ort.</div><div class="metric-value" style="color:var(--hyrox)">'+ha+'</div><div class="metric-sub">↑ '+hg+' büyüme</div></div>'+
-    '<div class="metric" style="border-color:var(--padel)"><div class="metric-label">Padel Ort.</div><div class="metric-value" style="color:var(--padel)">'+pa+'</div><div class="metric-sub">↑ '+pg+' büyüme</div></div>'+
-    '<div class="metric"><div class="metric-label">Hyrox Zirve</div><div class="metric-value" style="color:var(--hyrox)">'+pkm(hyroxT,dates)+'</div><div class="metric-sub">En yüksek ilgi</div></div>'+
-    '<div class="metric"><div class="metric-label">Padel Zirve</div><div class="metric-value" style="color:var(--padel)">'+pkm(padelT,dates)+'</div><div class="metric-sub">En yüksek ilgi</div></div>';
-  function mkLine(cid,data,color){return new Chart(document.getElementById(cid).getContext('2d'),{type:'line',data:{labels:labels,datasets:[{data:data,borderColor:color,backgroundColor:color+'18',borderWidth:2,pointRadius:2,tension:0.4,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:9},maxTicksLimit:8}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:9}}}}}});}
-  if(risingCharts.hyrox)risingCharts.hyrox.destroy();risingCharts.hyrox=mkLine('hyrox-chart',hyroxT,'#ff6b35');
-  if(risingCharts.padel)risingCharts.padel.destroy();risingCharts.padel=mkLine('padel-chart',padelT,'#00d4ff');
-  var top10=all.map(function(c){
-    var ha2=DATA.cities[c].rising&&DATA.cities[c].rising.hyrox?DATA.cities[c].rising.hyrox:[];
-    var pa2=DATA.cities[c].rising&&DATA.cities[c].rising.padel?DATA.cities[c].rising.padel:[];
-    return{city:c,hyrox:ha2.length?Math.round(ha2.reduce(function(a,b){return a+b;},0)/ha2.length):0,padel:pa2.length?Math.round(pa2.reduce(function(a,b){return a+b;},0)/pa2.length):0};
-  }).sort(function(a,b){return(b.hyrox+b.padel)-(a.hyrox+a.padel);}).slice(0,10);
-  document.getElementById('ris-legend').innerHTML='<span class="leg"><span class="leg-dot" style="background:#ff6b35"></span>Hyrox</span><span class="leg"><span class="leg-dot" style="background:#00d4ff"></span>Padel</span>';
-  if(risingCharts.city)risingCharts.city.destroy();
-  risingCharts.city=new Chart(document.getElementById('ris-city-chart').getContext('2d'),{type:'bar',data:{labels:top10.map(function(c){return c.city;}),datasets:[{label:'Hyrox',data:top10.map(function(c){return c.hyrox;}),backgroundColor:'#ff6b35',borderRadius:3},{label:'Padel',data:top10.map(function(c){return c.padel;}),backgroundColor:'#00d4ff',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#5a5a7a',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:9}}}}}});
-}
-
-function renderAntrenor(){
-  if(!DATA)return;
-  var ct=cities(STATE.antrenor.region),all=Object.keys(DATA.cities),sc=scores(ct,'antrenor',STATE.antrenor.kw);
-  document.getElementById('ant-rlabel').textContent=STATE.antrenor.region;
-  renderMetrics('ant-metrics',sc,'antrenor',STATE.antrenor.kw,'');
-  buildChips('ant-chips',ct,all,'filterAnt');
-  if(STATE.antrenor.chart)STATE.antrenor.chart.destroy();
-  STATE.antrenor.chart=buildLine('ant-chart',ct,all,'antrenor',STATE.antrenor.kw,'ant-legend',STATE.antrenor.city);
-  buildRanking('ant-ranking',sc,all);
-  if(STATE.antrenor.donut)STATE.antrenor.donut.destroy();
-  var kws=['personal trainer','online fitness kocu','fitness egitmeni'];
-  var lbls=['Personal Trainer','Online Koç','Fitness Eğitmeni'];
-  var totals=kws.map(function(kw){return ct.reduce(function(s,c){var a=(DATA.cities[c].antrenor&&DATA.cities[c].antrenor[kw])?DATA.cities[c].antrenor[kw]:[];return s+(a.length?Math.round(a.reduce(function(x,y){return x+y;},0)/a.length):0);},0);});
-  STATE.antrenor.donut=buildDonut('ant-donut',lbls,totals,['#8B5CF6','#06B6D4','#e8ff00']);
-  renderHizmet();
-}
-
-function filterAnt(city){STATE.antrenor.city=city;var ct=cities(STATE.antrenor.region),all=Object.keys(DATA.cities);if(STATE.antrenor.chart)STATE.antrenor.chart.destroy();STATE.antrenor.chart=buildLine('ant-chart',ct,all,'antrenor',STATE.antrenor.kw,'ant-legend',city);}
-
-function renderHizmet(){
-  if(!DATA)return;
-  var ct=cities('Tümü'),all=Object.keys(DATA.cities);
-  if(STATE.hizmet.chart)STATE.hizmet.chart.destroy();
-  STATE.hizmet.chart=buildLine('hiz-chart',ct,all,'hizmet',STATE.hizmet.kw,'hiz-legend',null);
-}
-
-function renderBeslenme(){
-  if(!DATA)return;
-  var ct=cities('Tümü'),all=Object.keys(DATA.cities);
-  if(STATE.beslenme.chart)STATE.beslenme.chart.destroy();
-  STATE.beslenme.chart=buildLine('bes-chart',ct,all,'beslenme',STATE.beslenme.kw,'bes-legend',null);
-}
-
-function renderEkipman(){
-  if(!DATA)return;
-  var ct=cities('Tümü'),all=Object.keys(DATA.cities);
-  if(STATE.ekipman.chart)STATE.ekipman.chart.destroy();
-  STATE.ekipman.chart=buildLine('ekp-chart',ct,all,'ekipman',STATE.ekipman.kw,'ekp-legend',null);
-}
-
-function renderIcerik(){
-  if(!DATA)return;
-  renderBeslenme();renderEkipman();
-  var all=Object.keys(DATA.cities);
-  var cats=['fitness','wellness','antrenor','beslenme','ekipman','rising'];
-  var allKws={fitness:['spor salonu','fitness','gym'],wellness:['yoga','pilates','meditasyon'],antrenor:['personal trainer','online fitness kocu','fitness egitmeni'],beslenme:['protein tozu','vegan beslenme','intermittent fasting'],ekipman:['kettlebell','trx','foam roller'],rising:['hyrox','padel']};
-  var rising=[];
-  cats.forEach(function(cat){
-    allKws[cat].forEach(function(kw){
-      var vals=all.map(function(c){var a=(DATA.cities[c][cat]&&DATA.cities[c][cat][kw])?DATA.cities[c][cat][kw]:[];return a;}).filter(function(a){return a.length>1;});
-      if(!vals.length)return;
-      var recent=vals.map(function(a){return a[a.length-1]||0;});
-      var prev=vals.map(function(a){return a[a.length-2]||0;});
-      var avgRecent=recent.reduce(function(s,v){return s+v;},0)/recent.length;
-      var avgPrev=prev.reduce(function(s,v){return s+v;},0)/prev.length;
-      var change=avgPrev>0?Math.round(((avgRecent-avgPrev)/avgPrev)*100):0;
-      rising.push({kw:kw,cat:cat,change:change,avg:Math.round(avgRecent)});
-    });
-  });
-  rising.sort(function(a,b){return b.change-a.change;});
-  document.getElementById('icerik-rising').innerHTML=rising.slice(0,8).map(function(r){
-    var cls=r.change>0?'badge-up':r.change<0?'badge-down':'badge-flat';
-    var arrow=r.change>0?'↑ ':r.change<0?'↓ ':'→ ';
-    return'<div class="insight-row"><span class="insight-label">'+r.kw+'</span><span style="font-size:9px;color:var(--muted);margin-left:4px;">['+r.cat+']</span><span class="insight-badge '+cls+'">'+arrow+Math.abs(r.change)+'%</span></div>';
-  }).join('');
-  var REGION_NAMES=['Marmara','Ege','İç Anadolu','Akdeniz','Karadeniz','Doğu Anadolu','Güneydoğu Anadolu'];
-  document.getElementById('icerik-region').innerHTML=REGION_NAMES.map(function(r){
-    var rCities=all.filter(function(c){return DATA.cities[c].region===r;});
-    if(!rCities.length)return'';
-    var bestKw={kw:'—',avg:0};
-    ['fitness','wellness','antrenor','beslenme','ekipman'].forEach(function(cat){
-      (allKws[cat]||[]).forEach(function(kw){
-        var avg=rCities.reduce(function(s,c){var a=(DATA.cities[c][cat]&&DATA.cities[c][cat][kw])?DATA.cities[c][cat][kw]:[];return s+(a.length?a.reduce(function(x,y){return x+y;},0)/a.length:0);},0)/rCities.length;
-        if(avg>bestKw.avg)bestKw={kw:kw,avg:Math.round(avg)};
-      });
-    });
-    return'<div class="insight-row"><span class="insight-label">'+r+'</span><span style="font-size:9px;color:var(--muted);">En çok aranan:</span><span class="insight-badge badge-up">'+bestKw.kw+'</span></div>';
-  }).join('');
+  STATE.wellness.chart=buildLine('wel-chart',ct,all,'wellness',STATE.wellness.kw,'wel-legend');
+  buildInsight('wel-insight',sc,'wellness',STATE.wellness.kw,STATE.wellness.region);
 }
 
 function generateReport(){
-  if(!DATA){alert('Veri yuklenmedi.');return;}
+  if(!DATA){alert('Veri yüklenmedi.');return;}
   var region=document.getElementById('ai-region').value;
   var cat=document.getElementById('ai-cat').value;
   var btn=document.getElementById('ai-gen-btn');
   var output=document.getElementById('ai-output');
-  btn.disabled=true;btn.textContent='URETILIYOR...';
+  btn.disabled=true;btn.textContent='ÜRETILIYOR...';
   output.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:20px;color:var(--muted);font-size:11px;"><div class="spinner"></div>Veriler analiz ediliyor...</div>';
-  var ct=cities(region==='Tumu'?'Tumu':region);
-  var catKws={fitness:['spor salonu','fitness','gym'],wellness:['yoga','pilates','meditasyon'],antrenor:['personal trainer','online fitness kocu','fitness egitmeni'],beslenme:['protein tozu','vegan beslenme','intermittent fasting'],ekipman:['kettlebell','trx','foam roller']};
+  var ct=cities(region==='Tümü'?'Tümü':region);
+  var catKws={fitness:['spor salonu','fitness','gym','reformer'],wellness:['yoga','pilates','meditasyon'],rising:['hyrox','padel']};
   var kws=catKws[cat]||[];
   var summary={bolge:region,kategori:cat,tarih:new Date(DATA.updated).toLocaleDateString('tr-TR'),veriler:{}};
   kws.forEach(function(kw){
     var sc=scores(ct,cat,kw);
-    var validSc=sc.filter(function(s){return s.avg>0;});
+    var valid=sc.filter(function(s){return s.avg>0;});
     summary.veriler[kw]={
-      top3:validSc.slice(0,3).map(function(s){return s.city+': '+s.avg;}).join(', '),
+      top3:valid.slice(0,3).map(function(s){return s.city+': '+s.avg;}).join(', '),
       peak:peakMonth(ct,cat,kw),
-      ortalama:validSc.length?Math.round(validSc.reduce(function(a,b){return a+b.avg;},0)/validSc.length):0,
-      veri_olan_sehir:validSc.length,
+      ortalama:valid.length?Math.round(valid.reduce(function(a,b){return a+b.avg;},0)/valid.length):0,
+      veri_sehir:valid.length,
       toplam_sehir:sc.length
     };
   });
@@ -631,15 +544,19 @@ function generateReport(){
     return{sehir:c,puan:Math.round(toplam/kws.length)};
   }).filter(function(s){return s.puan>0;}).sort(function(a,b){return b.puan-a.puan;}).slice(0,8);
   summary.sehir_skorlari=sehirSkorlari;
-  var prompt='Asagidaki Google Trends verilerini analiz et ve JSON formatinda rapor uret: '+JSON.stringify(summary);
-  fetch('https://fw-trends-report.plain-sunset-5f1d.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.report){renderReport(d.report,sehirSkorlari,region,cat);aiReport=d.report;}
-      else{output.innerHTML='<div style="color:#ff4d00;padding:12px;font-size:11px;">'+(d.text||'Rapor uretilemedi.')+'</div>';}
-    })
-    .catch(function(e){output.innerHTML='<div style="color:#ff4d00;padding:12px;font-size:11px;">Hata: '+e.message+'</div>';})
-    .finally(function(){btn.disabled=false;btn.textContent='RAPOR URET';});
+  var prompt='Asagidaki Google Trends verilerini analiz et ve JSON formatinda Market Intelligence raporu uret: '+JSON.stringify(summary);
+  fetch('https://fw-trends-report.plain-sunset-5f1d.workers.dev',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt:prompt})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.report){renderReport(d.report,sehirSkorlari,region,cat);aiReport=d.report;}
+    else{output.innerHTML='<div style="color:#ff4d00;padding:12px;font-size:11px;">'+(d.text||'Rapor üretilemedi.')+'</div>';}
+  })
+  .catch(function(e){output.innerHTML='<div style="color:#ff4d00;padding:12px;font-size:11px;">Hata: '+e.message+'</div>';})
+  .finally(function(){btn.disabled=false;btn.textContent='RAPOR ÜRET';});
 }
 
 function renderReport(r,sehirSkorlari,region,cat){
@@ -648,62 +565,64 @@ function renderReport(r,sehirSkorlari,region,cat){
   var barsHtml='';
   if(sehirSkorlari&&sehirSkorlari.length){
     var maxP=sehirSkorlari[0].puan||1;
-    barsHtml=sehirSkorlari.map(function(s){
+    barsHtml='<div style="margin-bottom:14px;"><div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">ŞEHİR PUANLARI</div>'+
+    sehirSkorlari.map(function(s){
       var pct=Math.round(s.puan/maxP*100);
       var color=pct>=80?'#66ff83':pct>=50?'#e8ff00':'#F59E0B';
-      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'+
+      return'<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">'+
         '<span style="font-size:10px;color:var(--text);min-width:80px;">'+s.sehir+'</span>'+
-        '<div style="flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;">'+
-        '<div style="width:'+pct+'%;height:100%;background:'+color+';border-radius:3px;"></div></div>'+
-        '<span style="font-size:10px;color:var(--muted);min-width:24px;text-align:right;">'+s.puan+'</span></div>';
-    }).join('');
+        '<div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;"><div style="width:'+pct+'%;height:100%;background:'+color+';border-radius:2px;"></div></div>'+
+        '<span style="font-size:9px;color:var(--muted);min-width:22px;text-align:right;">'+s.puan+'</span></div>';
+    }).join('')+'</div>';
   }
   var metricsHtml='';
   if(r.metrikler&&r.metrikler.length){
-    metricsHtml=r.metrikler.map(function(m){
-      return '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px 12px;">'+
-        '<div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">'+m.label+'</div>'+
+    metricsHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-bottom:14px;">'+
+    r.metrikler.map(function(m){
+      return'<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px;">'+
+        '<div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">'+m.label+'</div>'+
         '<div style="font-size:14px;font-family:Bebas Neue,sans-serif;color:var(--accent);">'+m.value+'</div></div>';
-    }).join('');
+    }).join('')+'</div>';
   }
   var icgorulerHtml='';
   if(r.icgoruler&&r.icgoruler.length){
-    icgorulerHtml=r.icgoruler.map(function(ig){
-      return '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">'+
-        '<span style="color:var(--green);font-size:12px;flex-shrink:0;">&#8594;</span>'+
-        '<span style="font-size:11px;color:var(--text);line-height:1.5;">'+ig+'</span></div>';
-    }).join('');
+    icgorulerHtml='<div style="margin-bottom:14px;"><div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">TEMEL İÇGÖRÜLER</div>'+
+    r.icgoruler.map(function(ig){
+      return'<div style="display:flex;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);">'+
+        '<span style="color:var(--green);font-size:11px;flex-shrink:0;">&#8594;</span>'+
+        '<span style="font-size:10px;color:var(--text);line-height:1.5;">'+ig+'</span></div>';
+    }).join('')+'</div>';
   }
   var aksiyonHtml='';
   if(r.aksiyonlar&&r.aksiyonlar.length){
-    aksiyonHtml=r.aksiyonlar.map(function(a,i){
-      return '<div style="display:flex;gap:8px;padding:6px 0;">'+
-        '<span style="background:var(--accent);color:#000;font-size:9px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+(i+1)+'</span>'+
-        '<span style="font-size:11px;color:var(--text);line-height:1.5;">'+a+'</span></div>';
-    }).join('');
+    aksiyonHtml='<div style="margin-bottom:14px;"><div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">AKSİYON PLANI</div>'+
+    r.aksiyonlar.map(function(a,i){
+      return'<div style="display:flex;gap:7px;padding:5px 0;">'+
+        '<span style="background:var(--accent);color:#000;font-size:8px;font-weight:700;min-width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+(i+1)+'</span>'+
+        '<span style="font-size:10px;color:var(--text);line-height:1.5;">'+a+'</span></div>';
+    }).join('')+'</div>';
   }
   output.innerHTML=
-    '<div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">'+region+' / '+cat.toUpperCase()+' ANALİZİ</div>'+
-    (r.ozet?'<div style="font-size:11px;color:var(--text);line-height:1.7;margin-bottom:16px;padding:12px;background:var(--panel);border-radius:6px;border-left:3px solid var(--accent);">'+r.ozet+'</div>':'')+
-    (metricsHtml?'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:16px;">'+metricsHtml+'</div>':'')+
-    (barsHtml?'<div style="margin-bottom:16px;"><div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">ŞEHİR PUANLARI</div>'+barsHtml+'</div>':'')+
-    (icgorulerHtml?'<div style="margin-bottom:16px;"><div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">TEMEL İÇGÖRÜLER</div>'+icgorulerHtml+'</div>':'')+
-    (r.firsatlar?'<div style="margin-bottom:16px;"><div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">FIRSAT ALANLARI</div><div style="font-size:11px;color:var(--text);line-height:1.6;padding:10px;background:rgba(102,255,131,0.05);border:1px solid rgba(102,255,131,0.2);border-radius:6px;">'+r.firsatlar+'</div></div>':'')+
-    (aksiyonHtml?'<div style="margin-bottom:16px;"><div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">AKSİYON PLANI</div>'+aksiyonHtml+'</div>':'')+
+    '<div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">'+region+' / '+cat.toUpperCase()+' — MARKET INTELLIGENCE</div>'+
+    (r.ozet?'<div style="font-size:11px;color:var(--text);line-height:1.7;margin-bottom:14px;padding:10px 12px;background:var(--panel);border-radius:6px;border-left:3px solid var(--premium);">'+r.ozet+'</div>':'')+
+    metricsHtml+barsHtml+icgorulerHtml+
+    (r.firsatlar?'<div style="margin-bottom:14px;"><div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">FIRSAT ALANLARI</div><div style="font-size:10px;color:var(--text);line-height:1.6;padding:10px;background:rgba(102,255,131,0.05);border:1px solid rgba(102,255,131,0.15);border-radius:6px;">'+r.firsatlar+'</div></div>':'')+
+    aksiyonHtml+
     '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--panel);border-radius:6px;border:1px solid var(--border);">'+
-    '<span style="font-size:10px;color:var(--muted);">Risk / Fırsat Skoru</span>'+
+    '<span style="font-size:9px;color:var(--muted);">Risk / Fırsat Skoru</span>'+
     '<div style="display:flex;align-items:center;gap:8px;">'+
-    '<span style="font-family:Bebas Neue,sans-serif;font-size:22px;color:'+skorColor+';">'+(r.skor||'?')+'/10</span>'+
-    '<span style="font-size:10px;color:var(--muted);max-width:200px;">'+(r.skor_gerekce||'')+'</span></div></div>';
+    '<span style="font-family:Bebas Neue,sans-serif;font-size:20px;color:'+skorColor+';">'+(r.skor||'?')+'/10</span>'+
+    '<span style="font-size:9px;color:var(--muted);max-width:200px;">'+(r.skor_gerekce||'')+'</span></div></div>';
   document.getElementById('pdf-btn').style.display='inline-block';
 }
+
 function downloadPDF(){
   if(!aiReport)return;
   var region=document.getElementById('ai-region').value;
   var cat=document.getElementById('ai-cat').value;
   var r=aiReport;
   var lines=[];
-  lines.push('FW TURKIYE - FITNESS INTELLIGENCE RAPORU');
+  lines.push('F&W INTELLIGENCE — MARKET INTELLIGENCE RAPORU');
   lines.push('='.repeat(50));
   lines.push('Bolge: '+region);
   lines.push('Kategori: '+cat);
@@ -715,15 +634,54 @@ function downloadPDF(){
   if(r.icgoruler){lines.push('TEMEL ICGORULER');r.icgoruler.forEach(function(ig){lines.push('- '+ig);});lines.push('');}
   if(r.firsatlar){lines.push('FIRSAT ALANLARI');lines.push(r.firsatlar);lines.push('');}
   if(r.aksiyonlar){lines.push('AKSIYON PLANI');r.aksiyonlar.forEach(function(a,i){lines.push((i+1)+'. '+a);});lines.push('');}
-  if(r.skor){lines.push('RISK / FIRSAT SKORU: '+r.skor+'/10 - '+(r.skor_gerekce||''));lines.push('');}
+  if(r.skor){lines.push('RISK / FIRSAT SKORU: '+r.skor+'/10');lines.push(r.skor_gerekce||'');lines.push('');}
   lines.push('='.repeat(50));
-  lines.push('FW Turkiye | fwturkiye.net');
+  lines.push('F&W Intelligence | fwturkiye.net');
+  lines.push('Bu rapor Google Trends verileri ve yapay zeka analizi ile olusturulmustur.');
   var blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download='FW-Rapor-'+region+'-'+cat+'.txt';a.click();
+  a.href=url;
+  a.download='FW-Intelligence-'+region+'-'+cat+'.txt';
+  a.click();
   URL.revokeObjectURL(url);
 }
+
+function submitForm(){
+  var name=document.getElementById('f-name').value.trim();
+  var email=document.getElementById('f-email').value.trim();
+  var company=document.getElementById('f-company').value.trim();
+  var note=document.getElementById('f-note').value.trim();
+  var msg=document.getElementById('f-msg');
+  var btn=document.getElementById('f-submit');
+  if(!name||!email){
+    msg.className='form-msg error';
+    msg.style.display='block';
+    msg.textContent='Ad Soyad ve E-posta alanları zorunludur.';
+    return;
+  }
+  btn.disabled=true;btn.textContent='GÖNDERİLİYOR...';
+  var body='Ad Soyad: '+name+'\nE-posta: '+email+'\nFirma: '+company+'\nPaket: '+selectedPkg.name+' ('+selectedPkg.price+')\nNot: '+note;
+  fetch('https://formsubmit.co/ajax/info@fwturkiye.net',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({name:name,email:email,message:body,_subject:'F&W Intelligence - Yeni Talep: '+selectedPkg.name,_captcha:'false'})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    msg.className='form-msg success';
+    msg.style.display='block';
+    msg.textContent='Talebiniz alındı! 24 saat içinde size dönüyoruz.';
+    btn.textContent='GÖNDERİLDİ ✓';
+  })
+  .catch(function(e){
+    msg.className='form-msg error';
+    msg.style.display='block';
+    msg.textContent='Gönderim hatası. Lütfen info@fwturkiye.net adresine e-posta gönderin.';
+    btn.disabled=false;btn.textContent='TALEP GÖNDER';
+  });
+}
+
 loadData();
 </script>
 </body>
