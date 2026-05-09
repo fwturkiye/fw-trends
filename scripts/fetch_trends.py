@@ -86,10 +86,10 @@ for region, cities in CITIES.items():
                 if not df.empty:
                     result['cities'][city][cat] = {kw: df[kw].tolist() for kw in keywords}
                     result['cities'][city]['dates'] = [str(d.date()) for d in df.index]
-                time.sleep(1.5)
+                time.sleep(10)
             except Exception as e:
                 print(f"  ✗ {cat}: {e}")
-                time.sleep(3)
+                time.sleep(5)
 
 os.makedirs('data', exist_ok=True)
 with open('data/trends.json', 'w', encoding='utf-8') as f:
