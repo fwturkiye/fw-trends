@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F&W Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#08080e;--panel:#0f0f18;--card:#13131e;--border:#1a1a2e;--accent:#e8ff00;--green:#66ff83;--text:#f0f0f5;--muted:#5a5a7a;--premium:#c9a84c;--hyrox:#ff6b35;--padel:#00d4ff;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--panel);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--text);}
+.logo span{color:var(--accent);}
+.logo small{font-size:8px;color:var(--muted);letter-spacing:2px;display:block;margin-top:-3px;}
+.updated{font-size:9px;color:var(--muted);}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--panel);}
+.tab{flex:1;padding:10px;font-size:10px;letter-spacing:1px;text-transform:uppercase;text-align:center;cursor:pointer;color:var(--muted);border:none;background:transparent;font-family:'DM Sans',sans-serif;border-bottom:2px solid transparent;transition:all 0.2s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+.tab.wtab.active{color:var(--green);border-bottom-color:var(--green);}
+.tab.rtab.active{color:var(--hyrox);border-bottom-color:var(--hyrox);}
+
+/* MAIN */
+.main{padding:14px;}
+.section{display:none;}.section.active{display:block;}
+
+/* REGION BAR */
+.region-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;}
+.rpill{font-size:9px;padding:3px 10px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.rpill.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+.rpill.wactive{background:var(--green);color:#000;border-color:var(--green);}
+
+/* KW BAR */
+.kw-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;align-items:center;}
+.kw-label{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:2px;}
+.kpill{font-size:9px;padding:3px 10px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.kpill.active{border-color:var(--accent);color:var(--accent);}
+.kpill.wactive{border-color:var(--green);color:var(--green);}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
+.metric{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:10px 12px;}
+.metric-label{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.metric-value{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);line-height:1;}
+.metric-value.gv{color:var(--green);}
+.metric-value.hv{color:var(--hyrox);}
+.metric-sub{font-size:8px;color:var(--muted);margin-top:2px;}
+
+/* CHART */
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px;}
+.chart-title{font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;}
+.legend{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.leg{display:flex;align-items:center;gap:3px;font-size:8px;color:var(--muted);}
+.leg-dot{width:5px;height:5px;border-radius:1px;flex-shrink:0;}
+
+/* INSIGHT */
+.insight{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:10px 12px;font-size:10px;color:var(--text);line-height:1.6;}
+.insight.wi{border-left-color:var(--green);}
+.insight.ri{border-left-color:var(--hyrox);}
+.insight-label{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+
+/* RISING */
+.rising-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.rising-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;}
+.rising-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;margin-bottom:3px;}
+.rising-sub{font-size:8px;color:var(--muted);margin-bottom:10px;}
+
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:20px auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading{text-align:center;padding:20px;color:var(--muted);font-size:10px;}
+
+/* WATERMARK */
+.watermark{text-align:center;padding:10px;font-size:8px;color:var(--muted);letter-spacing:1px;border-top:1px solid var(--border);margin-top:10px;}
+.watermark span{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">F&W<span> Intelligence</span><small>MARKET ANALYTICS</small></div>
+  <div class="updated" id="updatedAt">—</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="setTab(this,'fitness')">Fitness</button>
+  <button class="tab wtab" onclick="setTab(this,'wellness')">Wellness</button>
+  <button class="tab rtab" onclick="setTab(this,'rising')">Hyrox & Padel</button>
+</div>
+
+<div class="main">
+
+  <!-- FITNESS -->
+  <div class="section active" id="tab-fitness">
+    <div class="region-bar" id="fit-regions"></div>
+    <div class="kw-bar">
+      <span class="kw-label">Terim:</span>
+      <button class="kpill active" onclick="setKw('fitness',this,'spor salonu')">Spor Salonu</button>
+      <button class="kpill" onclick="setKw('fitness',this,'fitness')">Fitness</button>
+      <button class="kpill" onclick="setKw('fitness',this,'gym')">Gym</button>
+    </div>
+    <div class="metrics" id="fit-metrics"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="chart-card">
+      <div class="chart-title"><span>Aylık Arama Trendi</span><span id="fit-rlabel"></span></div>
+      <div class="legend" id="fit-legend"></div>
+      <div style="position:relative;width:100%;height:180px;"><canvas id="fit-chart"></canvas></div>
+    </div>
+    <div class="insight" id="fit-insight"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+
+  <!-- WELLNESS -->
+  <div class="section" id="tab-wellness">
+    <div class="region-bar" id="wel-regions"></div>
+    <div class="kw-bar">
+      <span class="kw-label">Terim:</span>
+      <button class="kpill wactive" onclick="setKw('wellness',this,'yoga')">Yoga</button>
+      <button class="kpill" onclick="setKw('wellness',this,'pilates')">Pilates</button>
+      <button class="kpill" onclick="setKw('wellness',this,'meditasyon')">Meditasyon</button>
+    </div>
+    <div class="metrics" id="wel-metrics"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="chart-card">
+      <div class="chart-title"><span>Wellness Arama Trendi</span><span id="wel-rlabel"></span></div>
+      <div class="legend" id="wel-legend"></div>
+      <div style="position:relative;width:100%;height:180px;"><canvas id="wel-chart"></canvas></div>
+    </div>
+    <div class="insight wi" id="wel-insight"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+
+  <!-- HYROX & PADEL -->
+  <div class="section" id="tab-rising">
+    <div class="metrics" id="ris-metrics"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="rising-grid">
+      <div class="rising-card">
+        <div class="rising-title" style="color:var(--hyrox);">HYROX</div>
+        <div class="rising-sub">Fonksiyonel fitness yarışma trendi</div>
+        <div style="position:relative;width:100%;height:160px;"><canvas id="hyrox-chart"></canvas></div>
+      </div>
+      <div class="rising-card">
+        <div class="rising-title" style="color:var(--padel);">PADEL</div>
+        <div class="rising-sub">Raket sporları yükseliş trendi</div>
+        <div style="position:relative;width:100%;height:160px;"><canvas id="padel-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="insight ri" id="ris-insight"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+
+  <div class="watermark">Powered by <span>F&W Intelligence</span> · fwturkiye.net</div>
+</div>
+
+<script>
+var C=['#e8ff00','#3B82F6','#66ff83','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#EC4899','#84CC16','#F97316'];
+var REGIONS=['Tümü','Marmara','Ege','İç Anadolu','Akdeniz','Güneydoğu Anadolu'];
+var DATA=null;
+var STATE={fitness:{region:'Tümü',kw:'spor salonu',chart:null},wellness:{region:'Tümü',kw:'yoga',chart:null}};
+var risingCharts={hyrox:null,padel:null};
+
+function loadData(){
+  fetch('https://fwturkiye.github.io/fw-trends/data/trends.json?t='+Date.now())
+    .then(function(r){if(!r.ok)throw new Error();return r.json();})
+    .then(function(j){
+      DATA=j;
+      var d=new Date(DATA.updated);
+      document.getElementById('updatedAt').textContent=d.toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'});
+      buildRegionBars();
+      renderFitness();
+      renderWellness();
+      renderRising();
+    })
+    .catch(function(){document.getElementById('updatedAt').textContent='Veri yüklenemedi';});
+}
+
+function getCities(region){
+  var all=Object.keys(DATA.cities);
+  if(region==='Tümü')return all;
+  return all.filter(function(c){return DATA.cities[c].region===region;});
+}
+
+function buildRegionBars(){
+  ['fit','wel'].forEach(function(p){
+    var isWel=p==='wel';
+    var el=document.getElementById(p+'-regions');
+    el.innerHTML=REGIONS.map(function(r){
+      return '<button class="rpill'+(r==='Tümü'?(isWel?' wactive':' active'):'')+'" onclick="setRegion(\''+p+'\',this,\''+r+'\')">'+r+'</button>';
+    }).join('');
+  });
+}
+
+function setRegion(p,btn,region){
+  document.getElementById(p+'-regions').querySelectorAll('.rpill').forEach(function(b){b.classList.remove('active','wactive');});
+  btn.classList.add(p==='wel'?'wactive':'active');
+  var tab=p==='fit'?'fitness':'wellness';
+  STATE[tab].region=region;
+  if(tab==='fitness')renderFitness();else renderWellness();
+}
+
+function setKw(tab,btn,kw){
+  btn.closest('.kw-bar').querySelectorAll('.kpill').forEach(function(b){b.classList.remove('active','wactive');});
+  btn.classList.add(tab==='wellness'?'wactive':'active');
+  STATE[tab].kw=kw;
+  if(tab==='fitness')renderFitness();else renderWellness();
+}
+
+function setTab(btn,tab){
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function scores(cities,cat,kw){
+  return cities.map(function(c){
+    var a=(DATA.cities[c][cat]&&DATA.cities[c][cat][kw])?DATA.cities[c][cat][kw]:[];
+    var avg=a.length?Math.round(a.reduce(function(x,y){return x+y;},0)/a.length):0;
+    return{city:c,avg:avg,first:a[0]||0,last:a[a.length-1]||0};
+  }).sort(function(a,b){return b.avg-a.avg;});
+}
+
+function peakMonth(cities,cat,kw){
+  var fc=cities.find(function(c){return DATA.cities[c]&&DATA.cities[c].dates;});
+  if(!fc)return'—';
+  var dates=DATA.cities[fc].dates||[];
+  var totals=dates.map(function(d,i){return{date:d,sum:cities.reduce(function(s,c){return s+((DATA.cities[c][cat]&&DATA.cities[c][cat][kw]&&DATA.cities[c][cat][kw][i])||0);},0)};});
+  var pk=totals.sort(function(a,b){return b.sum-a.sum;})[0];
+  return pk?new Date(pk.date).toLocaleDateString('tr-TR',{month:'long'}):'—';
+}
+
+function buildLine(canvasId,cities,cat,kw,legendId,lineColor){
+  var valid=cities.filter(function(c){return DATA.cities[c]&&DATA.cities[c].dates;});
+  if(!valid.length)return null;
+  var dates=DATA.cities[valid[0]].dates||[];
+  var labels=dates.map(function(d){return new Date(d).toLocaleDateString('tr-TR',{month:'short',year:'2-digit'});});
+  var disp=valid.slice(0,6);
+  var allC=Object.keys(DATA.cities);
+  document.getElementById(legendId).innerHTML=disp.map(function(c){
+    var idx=allC.indexOf(c);
+    return'<span class="leg"><span class="leg-dot" style="background:'+C[idx%C.length]+'"></span>'+c+'</span>';
+  }).join('');
+  var datasets=disp.map(function(c){
+    var idx=allC.indexOf(c);
+    return{label:c,data:(DATA.cities[c][cat]&&DATA.cities[c][cat][kw])?DATA.cities[c][cat][kw]:[],borderColor:C[idx%C.length],backgroundColor:'transparent',borderWidth:1.5,pointRadius:1,tension:0.35};
+  });
+  var ctx=document.getElementById(canvasId).getContext('2d');
+  return new Chart(ctx,{type:'line',data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:8},maxTicksLimit:8}},y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:8}}}}}});
+}
+
+function buildInsight(elId,sc,cat,kw,accentVar,cls){
+  var valid=sc.filter(function(s){return s.avg>0;});
+  var el=document.getElementById(elId);
+  el.className='insight'+(cls?' '+cls:'');
+  if(!valid.length){el.innerHTML='<div class="insight-label">Temel Insight</div>Bu bölge/terim için yeterli veri bulunmuyor.';return;}
+  var top=valid[0];
+  var trend=top.last>top.first?'yükseliyor ↑':'düşüyor ↓';
+  var tColor=top.last>top.first?'var(--green)':'#ff4d00';
+  var peak=peakMonth(valid.map(function(s){return s.city;}),cat,kw);
+  el.innerHTML='<div class="insight-label">Temel Insight</div>'+
+    '<strong style="color:'+accentVar+'">'+top.city+'</strong> en yüksek ilgiyle öne çıkıyor '+
+    '(ort. <strong>'+top.avg+'</strong> puan). Talep <span style="color:'+tColor+'">'+trend+'</span>. '+
+    'Zirve dönem: <strong>'+peak+'</strong>.'+
+    (valid.length>1?' <strong style="color:var(--muted)">'+valid[1].city+'</strong> ('+valid[1].avg+') ikinci sırada.':'');
+}
+
+function renderFitness(){
+  if(!DATA)return;
+  var ct=getCities(STATE.fitness.region),sc=scores(ct,'fitness',STATE.fitness.kw);
+  var valid=sc.filter(function(s){return s.avg>0;});
+  var top=valid[0]||{city:'—',avg:0,last:0,first:0};
+  var fastest=valid.slice().sort(function(a,b){return(b.last-b.first)-(a.last-a.first);})[0]||top;
+  var peak=peakMonth(ct,'fitness',STATE.fitness.kw);
+  document.getElementById('fit-rlabel').textContent=STATE.fitness.region;
+  document.getElementById('fit-metrics').innerHTML=
+    '<div class="metric"><div class="metric-label">En Popüler</div><div class="metric-value">'+top.city+'</div><div class="metric-sub">'+top.avg+' puan</div></div>'+
+    '<div class="metric"><div class="metric-label">En Hızlı</div><div class="metric-value">'+fastest.city+'</div><div class="metric-sub">&#8593; '+(fastest.last-fastest.first)+'</div></div>'+
+    '<div class="metric"><div class="metric-label">Zirve</div><div class="metric-value">'+peak+'</div><div class="metric-sub">En yüksek ilgi</div></div>';
+  if(STATE.fitness.chart)STATE.fitness.chart.destroy();
+  STATE.fitness.chart=buildLine('fit-chart',ct,'fitness',STATE.fitness.kw,'fit-legend','var(--accent)');
+  buildInsight('fit-insight',sc,'fitness',STATE.fitness.kw,'var(--accent)','');
+}
+
+function renderWellness(){
+  if(!DATA)return;
+  var ct=getCities(STATE.wellness.region),sc=scores(ct,'wellness',STATE.wellness.kw);
+  var valid=sc.filter(function(s){return s.avg>0;});
+  var top=valid[0]||{city:'—',avg:0,last:0,first:0};
+  var fastest=valid.slice().sort(function(a,b){return(b.last-b.first)-(a.last-a.first);})[0]||top;
+  var peak=peakMonth(ct,'wellness',STATE.wellness.kw);
+  document.getElementById('wel-rlabel').textContent=STATE.wellness.region;
+  document.getElementById('wel-metrics').innerHTML=
+    '<div class="metric"><div class="metric-label">En Popüler</div><div class="metric-value gv">'+top.city+'</div><div class="metric-sub">'+top.avg+' puan</div></div>'+
+    '<div class="metric"><div class="metric-label">En Hızlı</div><div class="metric-value gv">'+fastest.city+'</div><div class="metric-sub">&#8593; '+(fastest.last-fastest.first)+'</div></div>'+
+    '<div class="metric"><div class="metric-label">Zirve</div><div class="metric-value gv">'+peak+'</div><div class="metric-sub">En yüksek ilgi</div></div>';
+  if(STATE.wellness.chart)STATE.wellness.chart.destroy();
+  STATE.wellness.chart=buildLine('wel-chart',ct,'wellness',STATE.wellness.kw,'wel-legend','var(--green)');
+  buildInsight('wel-insight',sc,'wellness',STATE.wellness.kw,'var(--green)','wi');
+}
+
+function renderRising(){
+  if(!DATA)return;
+  var all=Object.keys(DATA.cities);
+  var fc=all.find(function(c){return DATA.cities[c].dates;});
+  if(!fc)return;
+  var dates=DATA.cities[fc].dates||[];
+  var labels=dates.map(function(d){return new Date(d).toLocaleDateString('tr-TR',{month:'short',year:'2-digit'});});
+  var hT=dates.map(function(_,i){return all.reduce(function(s,c){return s+((DATA.cities[c].rising&&DATA.cities[c].rising.hyrox&&DATA.cities[c].rising.hyrox[i])||0);},0);});
+  var pT=dates.map(function(_,i){return all.reduce(function(s,c){return s+((DATA.cities[c].rising&&DATA.cities[c].rising.padel&&DATA.cities[c].rising.padel[i])||0);},0);});
+  var hAvg=hT.length?Math.round(hT.reduce(function(a,b){return a+b;},0)/hT.length):0;
+  var pAvg=pT.length?Math.round(pT.reduce(function(a,b){return a+b;},0)/pT.length):0;
+  var hG=hT.length>1?hT[hT.length-1]-hT[0]:0;
+  var pG=pT.length>1?pT[pT.length-1]-pT[0]:0;
+  function pkm(t){if(!t.length)return'—';var mx=Math.max.apply(null,t);return new Date(dates[t.indexOf(mx)]).toLocaleDateString('tr-TR',{month:'long'});}
+  document.getElementById('ris-metrics').innerHTML=
+    '<div class="metric"><div class="metric-label">Hyrox Ort.</div><div class="metric-value hv">'+hAvg+'</div><div class="metric-sub">&#8593; '+hG+' büyüme</div></div>'+
+    '<div class="metric"><div class="metric-label">Padel Ort.</div><div class="metric-value" style="color:var(--padel)">'+pAvg+'</div><div class="metric-sub">&#8593; '+pG+' büyüme</div></div>'+
+    '<div class="metric"><div class="metric-label">Hyrox Zirve</div><div class="metric-value hv">'+pkm(hT)+'</div><div class="metric-sub">En yüksek ilgi</div></div>';
+  function mkLine(cid,data,color){
+    return new Chart(document.getElementById(cid).getContext('2d'),{type:'line',data:{labels:labels,datasets:[{data:data,borderColor:color,backgroundColor:color+'18',borderWidth:2,pointRadius:1,tension:0.4,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:8},maxTicksLimit:8}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#5a5a7a',font:{size:8}}}}}});
+  }
+  if(risingCharts.hyrox)risingCharts.hyrox.destroy();
+  risingCharts.hyrox=mkLine('hyrox-chart',hT,'#ff6b35');
+  if(risingCharts.padel)risingCharts.padel.destroy();
+  risingCharts.padel=mkLine('padel-chart',pT,'#00d4ff');
+  var hyroxValid=hAvg>0,padelValid=pAvg>0;
+  var el=document.getElementById('ris-insight');
+  el.className='insight ri';
+  if(!hyroxValid&&!padelValid){el.innerHTML='<div class="insight-label">Temel Insight</div>Bu bölge için Hyrox ve Padel verisi yetersiz.';return;}
+  var leader=hAvg>pAvg?'Hyrox':'Padel';
+  var leaderColor=hAvg>pAvg?'var(--hyrox)':'var(--padel)';
+  el.innerHTML='<div class="insight-label">Temel Insight</div>'+
+    '<strong style="color:'+leaderColor+'">'+leader+'</strong> bu dönemde öne çıkan trend. '+
+    (hG>0?'Hyrox <span style="color:var(--green)">yükseliyor ↑</span>. ':'Hyrox <span style="color:#ff4d00">düşüyor ↓</span>. ')+
+    (pG>0?'Padel <span style="color:var(--green)">yükseliyor ↑</span>.':'Padel <span style="color:#ff4d00">düşüyor ↓</span>.');
+}
+
+loadData();
+</script>
+</body>
+</html>
