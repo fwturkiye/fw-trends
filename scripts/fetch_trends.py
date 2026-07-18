@@ -5,94 +5,78 @@ from datetime import datetime
 pytrends = TrendReq(hl='tr-TR', tz=180)
 
 CITIES = {
-    'Marmara': {
-        'İstanbul':  'TR-34',
-        'Bursa':     'TR-16',
-        'Kocaeli':   'TR-41',
-        'Tekirdağ':  'TR-59',
-        'Balıkesir': 'TR-10',
-        'Edirne':    'TR-22',
-    },
-    'Ege': {
-        'İzmir':     'TR-35',
-        'Manisa':    'TR-45',
-        'Aydın':     'TR-09',
-        'Denizli':   'TR-20',
-        'Muğla':     'TR-48',
-        'Uşak':      'TR-64',
-    },
-    'İç Anadolu': {
-        'Ankara':    'TR-06',
-        'Konya':     'TR-42',
-        'Kayseri':   'TR-38',
-        'Eskişehir': 'TR-26',
-        'Sivas':     'TR-58',
-        'Aksaray':   'TR-68',
-    },
-    'Akdeniz': {
-        'Antalya':   'TR-07',
-        'Mersin':    'TR-33',
-        'Adana':     'TR-01',
-        'Hatay':     'TR-31',
-        'Isparta':   'TR-32',
-        'Burdur':    'TR-15',
-    },
-    'Karadeniz': {
-        'Samsun':    'TR-55',
-        'Trabzon':   'TR-61',
-        'Ordu':      'TR-52',
-        'Zonguldak': 'TR-67',
-        'Kastamonu': 'TR-37',
-        'Rize':      'TR-53',
-    },
-    'Doğu Anadolu': {
-        'Erzurum':   'TR-25',
-        'Malatya':   'TR-44',
-        'Elazığ':    'TR-23',
-        'Van':       'TR-65',
-        'Ağrı':      'TR-04',
-        'Kars':      'TR-36',
-    },
-    'Güneydoğu Anadolu': {
-        'Gaziantep': 'TR-27',
-        'Şanlıurfa': 'TR-63',
-        'Diyarbakır':'TR-21',
-        'Mardin':    'TR-47',
-        'Batman':    'TR-72',
-        'Adıyaman':  'TR-02',
-    },
+    'Marmara':           {'Istanbul': 'TR-34', 'Bursa': 'TR-16', 'Kocaeli': 'TR-41'},
+    'Ege':               {'Izmir': 'TR-35', 'Manisa': 'TR-45'},
+    'Ic Anadolu':        {'Ankara': 'TR-06', 'Konya': 'TR-42', 'Kayseri': 'TR-38'},
+    'Akdeniz':           {'Antalya': 'TR-07', 'Mersin': 'TR-33', 'Adana': 'TR-01', 'Hatay': 'TR-31'},
+    'Guneydogu Anadolu': {'Gaziantep': 'TR-27', 'Sanliurfa': 'TR-63', 'Diyarbakir': 'TR-21'},
+}
+
+CITY_LABELS = {
+    'Istanbul': 'İstanbul', 'Bursa': 'Bursa', 'Kocaeli': 'Kocaeli',
+    'Izmir': 'İzmir', 'Manisa': 'Manisa',
+    'Ankara': 'Ankara', 'Konya': 'Konya', 'Kayseri': 'Kayseri',
+    'Antalya': 'Antalya', 'Mersin': 'Mersin', 'Adana': 'Adana', 'Hatay': 'Hatay',
+    'Gaziantep': 'Gaziantep', 'Sanliurfa': 'Şanlıurfa', 'Diyarbakir': 'Diyarbakır',
+}
+
+REGION_LABELS = {
+    'Marmara': 'Marmara',
+    'Ege': 'Ege',
+    'Ic Anadolu': 'İç Anadolu',
+    'Akdeniz': 'Akdeniz',
+    'Guneydogu Anadolu': 'Güneydoğu Anadolu',
 }
 
 CATEGORIES = {
-    'fitness': ['spor salonu', 'fitness', 'gym'],
+    'fitness':  ['spor salonu', 'fitness', 'gym'],
     'wellness': ['yoga', 'pilates', 'meditasyon'],
-    'rising': ['hyrox', 'padel'],
+    'rising':   ['hyrox', 'padel'],
 }
+
+def fetch_with_retry(keywords, geo, retries=3):
+    for attempt in range(retries):
+        try:
+            pytrends.build_payload(keywords, timeframe='today 12-m', geo=geo)
+            df = pytrends.interest_over_time()
+            return df
+        except Exception as e:
+            print(f"    Deneme {attempt+1}/{retries}: {e}")
+            time.sleep(15 * (attempt + 1))
+    return None
 
 result = {
     'updated': datetime.now().isoformat(),
     'cities': {},
-    'regions': list(CITIES.keys()),
+    'regions': list(REGION_LABELS.values()),
 }
 
-for region, cities in CITIES.items():
-    for city, geo in cities.items():
-        print(f"→ {city} ({region})")
-        result['cities'][city] = {'region': region, 'geo': geo}
+total = sum(len(v) for v in CITIES.values())
+done = 0
+
+for region_key, cities in CITIES.items():
+    region_label = REGION_LABELS[region_key]
+    for city_key, geo in cities.items():
+        city_label = CITY_LABELS.get(city_key, city_key)
+        done += 1
+        print(f"\n[{done}/{total}] {city_label} ({region_label})")
+        result['cities'][city_label] = {'region': region_label, 'geo': geo}
         for cat, keywords in CATEGORIES.items():
-            try:
-                pytrends.build_payload(keywords, timeframe='today 12-m', geo=geo)
-                df = pytrends.interest_over_time()
-                if not df.empty:
-                    result['cities'][city][cat] = {kw: df[kw].tolist() for kw in keywords}
-                    result['cities'][city]['dates'] = [str(d.date()) for d in df.index]
-                time.sleep(10)
-            except Exception as e:
-                print(f"  ✗ {cat}: {e}")
-                time.sleep(5)
+            print(f"  -> {cat}")
+            df = fetch_with_retry(keywords, geo)
+            if df is not None and not df.empty:
+                result['cities'][city_label][cat] = {kw: df[kw].tolist() for kw in keywords if kw in df.columns}
+                if 'dates' not in result['cities'][city_label]:
+                    result['cities'][city_label]['dates'] = [str(d.date()) for d in df.index]
+                print(f"     OK")
+            else:
+                print(f"     Veri yok")
+            time.sleep(10)
+        time.sleep(5)
 
 os.makedirs('data', exist_ok=True)
 with open('data/trends.json', 'w', encoding='utf-8') as f:
     json.dump(result, f, ensure_ascii=False, indent=2)
 
-print("\n✅ Tamamlandı:", datetime.now())
+print(f"\nTamamlandi: {datetime.now()}")
+print(f"Toplam sehir: {len(result['cities'])}")
